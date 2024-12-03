@@ -839,7 +839,7 @@ def main(args):
 
         text_encoder = None
         tokenizer = None
-
+        
         gc.collect()
         torch.cuda.empty_cache()
     else:
