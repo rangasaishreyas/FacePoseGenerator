@@ -1,0 +1,16 @@
+*.pyc
+*.pth
+*.bin
+*.sbatch 
+*.sqfs 
+*.out 
+backup*
+
+*OUTPUT_MODELS*
+*GENERATED_SAMPLES*
+*FACE_DATASETS*
+*RESULTS*
+*Generated_Split*
+*FR-Ready_Datasets*
+*EXPERIMENTS*
+*VALIDATION_DATASETS*
