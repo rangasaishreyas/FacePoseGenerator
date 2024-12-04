@@ -57,7 +57,7 @@ from diffusers import (
     StableDiffusionXLPipeline,
     UNet2DConditionModel,
 )
-from diffusers.loaders import LoraLoaderMixin
+from diffusers.loaders import StableDiffusionXLLoraLoaderMixin as LoraLoaderMixin
 from diffusers.optimization import get_scheduler
 from diffusers.training_utils import _set_state_dict_into_text_encoder, cast_training_params, compute_snr
 from diffusers.utils import (
@@ -210,7 +210,7 @@ def log_validation(
             scheduler_args["variance_type"] = variance_type
 
         pipeline.scheduler = DPMSolverMultistepScheduler.from_config(pipeline.scheduler.config, **scheduler_args)
-
+    
     pipeline = pipeline.to(accelerator.device)
     pipeline.set_progress_bar_config(disable=True)
 
@@ -218,15 +218,28 @@ def log_validation(
     generator = torch.Generator(device=accelerator.device).manual_seed(cfg.seed) if cfg.seed else None
     # Currently the context determination is a bit hand-wavy. We can improve it in the future if there's a better
     # way to condition it. Reference: https://github.com/huggingface/diffusers/pull/7126#issuecomment-1968523051
-    inference_ctx = (
-        contextlib.nullcontext() if "playground" in cfg.pretrained_model_name_or_path else torch.cuda.amp.autocast()
-    )
+    # inference_ctx = (
+    #     contextlib.nullcontext() if "playground" in cfg.pretrained_model_name_or_path else torch.cuda.amp.autocast()
+    # )
 
-    with inference_ctx:
-        images = [pipeline(**pipeline_args, generator=generator).images[0] for _ in range(cfg.num_validation_images)]
+    phase_name = "test" if is_final_validation else "validation"
+    images = []
+    #with inference_ctx:
+    for i in range(cfg.num_validation_images):
+        #with torch.cuda.amp.autocast():
+        image = pipeline(**pipeline_args, generator=generator).images[0]
+        #print(np.array(image))
+        images.append(image)
+        folder_path = os.path.join(args.output_dir, phase_name)
+        os.makedirs(folder_path,exist_ok=True)
+        image_filename = f"{folder_path}/{epoch}_validation_img_{i}.jpg"
+        image.save(image_filename)
+
+    #with inference_ctx:
+    #    images = [pipeline(**pipeline_args, generator=generator).images[0] for _ in range(cfg.num_validation_images)]
 
     for tracker in accelerator.trackers:
-        phase_name = "test" if is_final_validation else "validation"
+        
         if tracker.name == "tensorboard":
             np_images = np.stack([np.asarray(img) for img in images])
             tracker.writer.add_images(phase_name, np_images, epoch, dataformats="NHWC")
@@ -351,8 +364,6 @@ class DreamBoothDataset(Dataset):
         size=1024,
         repeats=1,
         center_crop=False,
-        encoder_hidden_states=None,
-        class_prompt_encoder_hidden_states=None,
         ):
         self.size = size
         self.center_crop = center_crop
@@ -360,9 +371,6 @@ class DreamBoothDataset(Dataset):
         self.instance_prompt = instance_prompt
         self.custom_instance_prompts = None
         self.class_prompt = class_prompt
-        self.encoder_hidden_states = encoder_hidden_states
-        self.class_prompt_encoder_hidden_states = class_prompt_encoder_hidden_states
-        
         
         self.instance_data_root = Path(instance_data_root)
         if not self.instance_data_root.exists():
@@ -450,10 +458,7 @@ class DreamBoothDataset(Dataset):
         example["original_size"] = original_size
         example["crop_top_left"] = crop_top_left
 
-        if self.encoder_hidden_states is not None:
-            example["instance_prompt"] = self.encoder_hidden_states
-        
-        elif self.custom_instance_prompts:
+        if self.custom_instance_prompts:
             caption = self.custom_instance_prompts[index % self.num_instance_images]
             if caption:
                 example["instance_prompt"] = caption
@@ -474,11 +479,7 @@ class DreamBoothDataset(Dataset):
                 class_image = class_image.convert("RGB")
             example["class_images"] = self.image_transforms(class_image)
 
-            if self.class_prompt_encoder_hidden_states is not None:
-                example["class_prompt"] = self.class_prompt_encoder_hidden_states
-            
-            else:
-                example["class_prompt"] = self.class_prompt
+            example["class_prompt"] = self.class_prompt
             example["class_identity_embeds"] = torch.load(self.class_identity_embeds_path[index % self.num_class_images]) 
         
         return example
@@ -827,7 +828,7 @@ def main(args):
                 # make sure to pop weight so that corresponding model is not saved again
                 weights.pop()
 
-            LoraLoaderMixin.save_lora_weights( 
+            LoraLoaderMixin.save_lora_weights(
                 output_dir,
                 unet_lora_layers=unet_lora_layers_to_save,
                 text_encoder_lora_layers=text_encoder_one_lora_layers_to_save,
@@ -1002,43 +1003,6 @@ def main(args):
             safeguard_warmup=cfg.prodigy_safeguard_warmup,
         )
 
-    if cfg.pre_compute_text_embeddings:
-
-        def compute_text_embeddings(prompt):
-            with torch.no_grad():
-                text_inputs = tokenize_prompt(tokenizer, prompt, tokenizer_max_length=cfg.tokenizer_max_length)
-                prompt_embeds = encode_prompt(
-                    text_encoder,
-                    text_inputs.input_ids,
-                    text_inputs.attention_mask,
-                    text_encoder_use_attention_mask=cfg.text_encoder_use_attention_mask,
-                )
-
-            return prompt_embeds
-
-        pre_computed_encoder_hidden_states = compute_text_embeddings(cfg.instance_prompt)
-        validation_prompt_negative_prompt_embeds = compute_text_embeddings("")
-
-        if cfg.validation_prompt is not None:
-            validation_prompt_encoder_hidden_states = compute_text_embeddings(cfg.validation_prompt)
-        else:
-            validation_prompt_encoder_hidden_states = None
-
-        if cfg.class_prompt is not None:
-            pre_computed_class_prompt_encoder_hidden_states = compute_text_embeddings(cfg.class_prompt)
-        else:
-            pre_computed_class_prompt_encoder_hidden_states = None
-
-        text_encoder = None
-        tokenizer = None
-        
-        gc.collect()
-        torch.cuda.empty_cache()
-    else:
-        pre_computed_encoder_hidden_states = None
-        validation_prompt_encoder_hidden_states = None
-        validation_prompt_negative_prompt_embeds = None
-        pre_computed_class_prompt_encoder_hidden_states = None
 
     # Dataset and DataLoaders creation:
     train_dataset = DreamBoothDataset(
@@ -1050,9 +1014,6 @@ def main(args):
         size=cfg.resolution,
         #repeats=cfg.repeats,
         #center_crop=cfg.center_crop,
-        encoder_hidden_states=pre_computed_encoder_hidden_states,
-        class_prompt_encoder_hidden_states=pre_computed_class_prompt_encoder_hidden_states,
-        
     )
 
     train_dataloader = torch.utils.data.DataLoader(
@@ -1101,10 +1062,13 @@ def main(args):
             class_prompt_hidden_states, class_pooled_prompt_embeds = compute_text_embeddings(
                 cfg.class_prompt, text_encoders, tokenizers
             )
-
+    
+        
     # Clear the memory here
     if not cfg.train_text_encoder and not train_dataset.custom_instance_prompts:
         del tokenizers, text_encoders
+        del tokenizer_one, tokenizer_two
+        del text_encoder_one, text_encoder_two
         gc.collect()
         torch.cuda.empty_cache()
 
@@ -1461,39 +1425,35 @@ def main(args):
                     loss = loss.mean()
 
                     
-                #if cfg.with_prior_preservation:
+                if cfg.with_prior_preservation:
                     # Add the prior loss to the instance loss.
-                    #loss = loss + cfg.prior_loss_weight * prior_loss
+                    loss = loss + cfg.prior_loss_weight * prior_loss
+                
                 #print(cfg.which_loss)
                 if cfg.which_loss == "identity": 
                     latent_x0 = noise_scheduler.step(model_pred, timesteps[0], noisy_model_input[0]).pred_original_sample
                     # Perform face detection first 
                     img = latents_to_image_for_mtcnn(latent_x0.to(vae.dtype), vae) 
-                    identity_loss = F.mse_loss(img, img) 
-                    loss = loss + identity_loss
                     
-                    """
                     bboxs, probs = mtcnn_model.detect(img, landmarks=False)
                     if bboxs is not None: #and bboxs_prior is not None:  
                         bbox = bboxs[0].astype(int) 
                         initial_size = img.shape[0]
                         img_cropped = img[max(0,bbox[1]): min(bbox[3], initial_size ) , max(0, bbox[0]): min(bbox[2], initial_size)] 
                     
-                    img_cropped = cropped_image_to_arcface_input(img_cropped)
-                    pred_arcface_features = arcface_model(img_cropped)
-                    
-                    # compare arcface features between predicted face and gt face
-                    arcface_cos_similarity = cos(pred_arcface_features, gt_arcface_embed[0])
-                    
-                    identity_loss = 1 - arcface_cos_similarity #((1 - arcface_cos_similarity) + (1 - arcface_cos_similarity_prior)) / 2 # TODO check is this ok                         
+                        img_cropped = cropped_image_to_arcface_input(img_cropped)
+                        pred_arcface_features = arcface_model(img_cropped)
+                        
+                        # compare arcface features between predicted face and gt face
+                        arcface_cos_similarity = cos(pred_arcface_features, gt_arcface_embed[0])  
+                        identity_loss = 1 - arcface_cos_similarity #((1 - arcface_cos_similarity) + (1 - arcface_cos_similarity_prior)) / 2 # TODO check is this ok                         
 
-                    identity_noise_level_weight = timesteps[0] / noise_scheduler.config.num_train_timesteps
-                    if not cfg.timestep_loss_weighting: identity_noise_level_weight = 1 
-                    # print("Loss", loss)
-                    loss = loss + identity_noise_level_weight * identity_loss
-                    """
+                        identity_noise_level_weight = timesteps[0] / noise_scheduler.config.num_train_timesteps
+                        if not cfg.timestep_loss_weighting: identity_noise_level_weight = 1 
+                        loss = loss + identity_noise_level_weight * identity_loss
+                    
 
-                if cfg.which_loss == "triplet_prior": 
+                elif cfg.which_loss == "triplet_prior": 
                         
                     latent_x0 = noise_scheduler.step(model_pred, timesteps[0], noisy_model_input[0]).pred_original_sample
                     
@@ -1515,7 +1475,6 @@ def main(args):
 
                         identity_noise_level_weight = timesteps[0] / noise_scheduler.config.num_train_timesteps
                         if not cfg.timestep_loss_weighting: identity_noise_level_weight = 1 
-                    
 
                         # input: anchor, positive, negative    
                         triplet_loss = triplet_loss_function(pred_arcface_features, gt_arcface_embed[0][None, :], gt_arcface_embed[1][None, :])
@@ -1574,32 +1533,33 @@ def main(args):
                 break
 
         if accelerator.is_main_process:
+            print("Perform validation during training")
             if cfg.validation_prompt is not None and epoch % cfg.validation_epochs == 0:
                 # create pipeline
-                if not cfg.train_text_encoder:
-                    text_encoder_one = text_encoder_cls_one.from_pretrained(
-                        cfg.pretrained_model_name_or_path,
-                        subfolder="text_encoder",
-                        revision=cfg.revision,
-                        variant=cfg.variant,
-                    )
-                    text_encoder_two = text_encoder_cls_two.from_pretrained(
-                        cfg.pretrained_model_name_or_path,
-                        subfolder="text_encoder_2",
-                        revision=cfg.revision,
-                        variant=cfg.variant,
-                    )
+                # if not cfg.train_text_encoder:
+                #     text_encoder_one = text_encoder_cls_one.from_pretrained(
+                #         cfg.pretrained_model_name_or_path,
+                #         subfolder="text_encoder",
+                #         revision=cfg.revision,
+                #         variant=cfg.variant,
+                #     )
+                #     text_encoder_two = text_encoder_cls_two.from_pretrained(
+                #         cfg.pretrained_model_name_or_path,
+                #         subfolder="text_encoder_2",
+                #         revision=cfg.revision,
+                #         variant=cfg.variant,
+                #     )
                 pipeline = StableDiffusionXLPipeline.from_pretrained(
                     cfg.pretrained_model_name_or_path,
                     vae=vae,
-                    text_encoder=accelerator.unwrap_model(text_encoder_one),
-                    text_encoder_2=accelerator.unwrap_model(text_encoder_two),
+                    #text_encoder=accelerator.unwrap_model(text_encoder_one),
+                    #text_encoder_2=accelerator.unwrap_model(text_encoder_two),
                     unet=accelerator.unwrap_model(unet),
                     revision=cfg.revision,
                     variant=cfg.variant,
                     torch_dtype=weight_dtype,
                 )
-                pipeline_args = {"prompt": cfg.validation_prompt}
+                pipeline_args = {"prompt": cfg.validation_prompt, "num_inference_steps": 30}
 
                 images = log_validation(
                     pipeline,
@@ -1608,7 +1568,7 @@ def main(args):
                     pipeline_args,
                     epoch,
                 )
-
+        
         if accelerator.is_main_process:
             if epoch % cfg.checkpointing_epochs == 0 or final_state:
             #if final_state:
@@ -1645,7 +1605,7 @@ def main(args):
     accelerator.wait_for_everyone()
     if accelerator.is_main_process:
         unet = unwrap_model(unet)
-        unet = unet.to(torch.float32)
+        #unet = unet.to(torch.float32)
         unet_lora_layers = convert_state_dict_to_diffusers(get_peft_model_state_dict(unet))
 
         if cfg.train_text_encoder:
@@ -1657,6 +1617,7 @@ def main(args):
             text_encoder_2_lora_layers = convert_state_dict_to_diffusers(
                 get_peft_model_state_dict(text_encoder_two.to(torch.float32))
             )
+        
         else:
             text_encoder_lora_layers = None
             text_encoder_2_lora_layers = None
@@ -1757,3 +1718,4 @@ if __name__ == "__main__":
                 continue  
             main(args)
             #break 
+        #break

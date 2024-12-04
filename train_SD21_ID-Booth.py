@@ -163,13 +163,13 @@ def log_validation(
     # if cfg.validation_images is None:
     images = []
     for i in range(cfg.num_validation_images):
-        with torch.cuda.amp.autocast():
-            image = pipeline(**pipeline_args, generator=generator).images[0]
-            images.append(image)
-            folder_path = os.path.join(args.output_dir, "validation")
-            os.makedirs(folder_path,exist_ok=True)
-            image_filename = f"{folder_path}/{epoch}_validation_img_{i}.jpg"
-            image.save(image_filename)
+        #with torch.cuda.amp.autocast():
+        image = pipeline(**pipeline_args, generator=generator).images[0]
+        images.append(image)
+        folder_path = os.path.join(args.output_dir, "validation")
+        os.makedirs(folder_path,exist_ok=True)
+        image_filename = f"{folder_path}/{epoch}_validation_img_{i}.jpg"
+        image.save(image_filename)
 
     # else:
     #     images = []

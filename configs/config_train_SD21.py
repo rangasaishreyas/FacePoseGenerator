@@ -81,7 +81,7 @@ validation_epochs = 1
 pre_compute_text_embeddings = True
 
 
-losses_to_test = ["identity", "triplet_prior"] # TODO #[ "", "syn_moco_identity"]
+losses_to_test = ["", "identity", "triplet_prior"] # TODO #[ "", "syn_moco_identity"]
 
 timestep_loss_weighting = True 
 

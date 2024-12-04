@@ -16,7 +16,7 @@ revision = None
 variant = None 
 
 use_8bit_adam  = True  # TODO memory 
-enable_xformers_memory_efficient_attention = False # TODO
+enable_xformers_memory_efficient_attention = False 
 sample_batch_size = 1 # 4
 
 scale_lr = False # TODO  
@@ -59,7 +59,7 @@ max_grad_norm = 1.0
 
 do_edm_style_training = False
 snr_gamma = None
-random_flip = False # TODO could also flip 
+random_flip = True # TODO could also flip 
 
 lr_warmup_steps = 0 # TODO 500? 
 lr_scheduler = "cosine" 
@@ -84,13 +84,10 @@ use_dora = False
 
 learning_rate = 1e-4 # 1e-4 # TODO  
 num_train_epochs = 5 # 10 #2 # TODO
-checkpointing_epochs = 4
+checkpointing_epochs = 1
 validation_epochs = 1 
 
-pre_compute_text_embeddings = True
-
-
-losses_to_test = ["","identity", "triplet_prior"] # TODO #[ "", "syn_moco_identity"]
+losses_to_test = ["identity", "triplet_prior"] # TODO #[ "", "syn_moco_identity"]
 
 timestep_loss_weighting = True 
 
