@@ -303,6 +303,38 @@ def latents_to_image_for_mtcnn(latents, vae):
     image = torch.permute(image, (1, 2, 0))
     return image
 
+# convert a normalized image back to RGB format suitable for PIL
+def reverse_normalized_image(img, multiply_255=True):
+    mean = 0.5
+    std = 0.5 
+
+    denorm = transforms.Normalize(
+        mean=[-mean / std],
+        std=[1.0 / std],
+    )
+
+    img = denorm(img).clip(0, 1)    
+
+    if multiply_255:
+        img = (img * 255).to(dtype=torch.uint8)    
+    return img 
+
+
+def save_normalized_image(images, path):
+    images = images[0]
+    images = reverse_normalized_image(images, multiply_255=True)
+    img_save = transforms.functional.to_pil_image(images, mode="RGB")
+    img_save.save(path)
+    return True 
+
+def latents_decode(latents, vae):
+    # bath of latents -> list of images
+    latents = (1 / 0.18215) * latents  # 0.18215
+    with torch.no_grad():
+        image = vae.decode(latents).sample #[0]
+
+    return image
+
 
 # def latents_to_image_for_arcface(latents, vae):
 #     # bath of latents -> list of images
@@ -1272,6 +1304,9 @@ def main(args):
                     timesteps = torch.randint(
                         0, noise_scheduler.config.num_train_timesteps, (bsz,), device=model_input.device
                     )
+                    # timesteps = torch.randint(
+                    #     1, 10, (bsz,), device=model_input.device
+                    # )
                     timesteps = timesteps.long()
                 else:
                     # in EDM formulation, the model is conditioned on the pre-conditioned noise levels
@@ -1432,7 +1467,12 @@ def main(args):
                 
                 #print(cfg.which_loss)
                 if cfg.which_loss == "identity": 
+                    # save_normalized_image(pixel_values, f"images_during_training/input_{step}.jpg")
                     latent_x0 = noise_scheduler.step(model_pred, timesteps[0], noisy_model_input[0]).pred_original_sample
+
+                    # tmp_img = latents_decode(latent_x0, vae)
+                    # save_normalized_image(tmp_img, f"images_during_training/latent_decoded_{timesteps[0]}.jpg")
+                    # exit()
                     # Perform face detection first 
                     img = latents_to_image_for_mtcnn(latent_x0.to(vae.dtype), vae) 
                     
@@ -1449,7 +1489,7 @@ def main(args):
                         arcface_cos_similarity = cos(pred_arcface_features, gt_arcface_embed[0])  
                         identity_loss = 1 - arcface_cos_similarity #((1 - arcface_cos_similarity) + (1 - arcface_cos_similarity_prior)) / 2 # TODO check is this ok                         
 
-                        identity_noise_level_weight = timesteps[0] / noise_scheduler.config.num_train_timesteps
+                        identity_noise_level_weight =  (1 -  timesteps[0] / noise_scheduler.config.num_train_timesteps) ** 2
                         if not cfg.timestep_loss_weighting: identity_noise_level_weight = 1 
                         loss = loss + identity_noise_level_weight * identity_loss
                     
@@ -1474,7 +1514,7 @@ def main(args):
                         img_cropped = cropped_image_to_arcface_input(img_cropped)
                         pred_arcface_features = arcface_model(img_cropped)                   
 
-                        identity_noise_level_weight = timesteps[0] / noise_scheduler.config.num_train_timesteps
+                        identity_noise_level_weight =  (1 - timesteps[0] / noise_scheduler.config.num_train_timesteps) ** 2
                         if not cfg.timestep_loss_weighting: identity_noise_level_weight = 1 
 
                         # input: anchor, positive, negative    
