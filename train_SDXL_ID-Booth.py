@@ -1224,8 +1224,8 @@ def main(args):
 
     for epoch in range(first_epoch, cfg.num_train_epochs):
         unet.train()
-        avg_loss = []; avg_id_loss = []
-
+        avg_combined_loss = []; avg_id_loss = []; avg_instance_loss = []; avg_prior_loss = []
+        
         if cfg.train_text_encoder:
             text_encoder_one.train()
             text_encoder_two.train()
@@ -1401,9 +1401,9 @@ def main(args):
                             ),
                             1,
                         )
-                        loss = loss.mean()
+                        instance_loss = loss.mean()
                     else:
-                        loss = F.mse_loss(model_pred.float(), target.float(), reduction="mean")
+                        instance_loss = F.mse_loss(model_pred.float(), target.float(), reduction="mean")
                 else:
                     # Compute loss-weights as per Section 3.4 of https://arxiv.org/abs/2303.09556.
                     # Since we predict the noise instead of x_0, the original formulation is slightly changed.
@@ -1424,7 +1424,8 @@ def main(args):
                     loss = loss.mean(dim=list(range(1, len(loss.shape)))) * mse_loss_weights
                     loss = loss.mean()
 
-                    
+                loss = instance_loss 
+
                 if cfg.with_prior_preservation:
                     # Add the prior loss to the instance loss.
                     loss = loss + cfg.prior_loss_weight * prior_loss
@@ -1512,7 +1513,8 @@ def main(args):
 
             
             step_loss = loss.detach().item()
-            avg_loss.append(step_loss)
+            step_instance_loss = instance_loss.detach().item()
+            step_prior_loss = prior_loss.detach().item()
 
             if cfg.which_loss == "identity":
                 step_id_loss = identity_loss.detach().item()
@@ -1522,8 +1524,13 @@ def main(args):
 
             else: step_id_loss = 0
             
+            avg_combined_loss.append(step_loss)
+            avg_instance_loss.append(step_instance_loss)
+            avg_prior_loss.append(step_prior_loss)
             avg_id_loss.append(step_id_loss)
-            logs = {"combined loss": step_loss, "id loss": step_id_loss, "lr": lr_scheduler.get_last_lr()[0]}
+
+            logs = {"Step Loss/Reconstruction": step_instance_loss, "Step Loss/ID": step_id_loss,  
+                    "Step Loss/Prior": step_prior_loss, "Step Loss/Combined": step_loss, "LR": lr_scheduler.get_last_lr()[0]}
             progress_bar.set_postfix(**logs)
             accelerator.log(logs, step=global_step)
 
@@ -1594,11 +1601,12 @@ def main(args):
                             removing_checkpoint = os.path.join(args.output_dir, removing_checkpoint)
                             shutil.rmtree(removing_checkpoint)
 
-                save_path = os.path.join(args.output_dir, f"checkpoint-{global_step}")
+                save_path = os.path.join(args.output_dir, f"checkpoint-{epoch}-{global_step}")
                 accelerator.save_state(save_path)
                 logger.info(f"Saved state to {save_path}")
 
-        epoch_logs = {"epoch_loss": np.mean(np.array(avg_loss)), "epoch_id_loss": np.mean(np.array(avg_id_loss))}
+        epoch_logs = {"Epoch Loss/Reconstruction": np.mean(np.array(avg_instance_loss)), "Epoch Loss/ID": np.mean(np.array(avg_id_loss)),
+                      "Epoch Loss/Prior": np.mean(np.array(avg_prior_loss)), "Epoch Loss/Combined": np.mean(np.array(avg_combined_loss)),}
         accelerator.log(epoch_logs, step=global_step)
 
     # Save the lora layers
