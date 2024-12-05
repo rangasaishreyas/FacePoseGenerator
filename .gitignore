@@ -17,3 +17,4 @@ backup*
 *CLASS_IMAGES*
 *BACKUP*
 *facenet_pytorch*
+*images_during_training*
