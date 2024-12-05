@@ -160,16 +160,17 @@ def log_validation(
     # run inference
     generator = torch.Generator(device=accelerator.device).manual_seed(cfg.seed) if cfg.seed else None
 
+    phase_name = "test" if is_final_validation else "validation"
     # if cfg.validation_images is None:
     images = []
     for i in range(cfg.num_validation_images):
-        #with torch.cuda.amp.autocast():
-        image = pipeline(**pipeline_args, generator=generator).images[0]
-        images.append(image)
-        folder_path = os.path.join(args.output_dir, "validation")
-        os.makedirs(folder_path,exist_ok=True)
-        image_filename = f"{folder_path}/{epoch}_validation_img_{i}.jpg"
-        image.save(image_filename)
+        with torch.cuda.amp.autocast():
+            image = pipeline(**pipeline_args, generator=generator).images[0]
+            images.append(image)
+            folder_path = os.path.join(args.output_dir, phase_name)
+            os.makedirs(folder_path,exist_ok=True)
+            image_filename = f"{folder_path}/{epoch}_validation_img_{i}.jpg"
+            image.save(image_filename)
 
     # else:
     #     images = []
@@ -180,7 +181,6 @@ def log_validation(
     #         images.append(image)
             
     for tracker in accelerator.trackers:
-        phase_name = "test" if is_final_validation else "validation"
         if tracker.name == "tensorboard":
             np_images = np.stack([np.asarray(img) for img in images])
             tracker.writer.add_images(phase_name, np_images, epoch, dataformats="NHWC")
@@ -1176,7 +1176,7 @@ def main(args):
         
         # Checks if the accelerator has performed an optimization step behind the scenes
         if accelerator.is_main_process:
-            if epoch % cfg.checkpointing_epochs == 0 or final_state: 
+            if (epoch + 1) % cfg.checkpointing_epochs == 0 or final_state: 
             #if global_step % cfg.checkpointing_steps == 0:
                 # _before_ saving state, check if this save would set us over the `checkpoints_total_limit`
                 if cfg.checkpoints_total_limit is not None:
@@ -1203,7 +1203,7 @@ def main(args):
                 logger.info(f"Saved state to {save_path}")
 
         if accelerator.is_main_process:
-            if cfg.validation_prompt is not None and (epoch+1) % cfg.validation_epochs == 0:
+            if cfg.validation_prompt is not None and (epoch + 1) % cfg.validation_epochs == 0:
                 # create pipeline
                 pipeline = DiffusionPipeline.from_pretrained(
                     cfg.pretrained_model_name_or_path,
@@ -1322,7 +1322,7 @@ if __name__ == "__main__":
         #exit()
         id_folders.sort(key=natural_keys)
         # print(id_folders)
-        id_limit = 0 # TODO  
+        id_limit = 3# 5 # TODO  
         for i, id_folder in enumerate(id_folders): 
             print(id_folder)
             if id_limit != 0 and i > id_limit: 
