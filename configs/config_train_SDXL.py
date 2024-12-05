@@ -59,7 +59,7 @@ max_grad_norm = 1.0
 
 do_edm_style_training = False
 snr_gamma = None
-random_flip = True # TODO could also flip 
+random_flip = False # TODO could also flip, but faces can be non-symetrical 
 
 lr_warmup_steps = 0 # TODO 500? 
 lr_scheduler = "cosine" 
@@ -87,7 +87,7 @@ num_train_epochs = 5 # 10 #2 # TODO
 checkpointing_epochs = 1
 validation_epochs = 1 
 
-losses_to_test = ["identity", "triplet_prior"] # TODO #[ "", "syn_moco_identity"]
+losses_to_test = ["","identity", "triplet_prior"] # TODO #[ "", "syn_moco_identity"]
 
 timestep_loss_weighting = True 
 
