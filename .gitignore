@@ -14,3 +14,6 @@ backup*
 *FR-Ready_Datasets*
 *EXPERIMENTS*
 *VALIDATION_DATASETS*
+*CLASS_IMAGES*
+*BACKUP*
+*facenet_pytorch*
