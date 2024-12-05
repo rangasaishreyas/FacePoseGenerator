@@ -74,14 +74,14 @@ train_batch_size = 1
 lora_rank = 4
 
 learning_rate = 1e-4 # 1e-4 # TODO  
-num_train_epochs = 20 # 10 #2 # TODO
-checkpointing_epochs = 4
-validation_epochs = 1 
+num_train_epochs = 20 #20 # 10 #2 # TODO
+checkpointing_epochs = 5
+validation_epochs = 5 #1 
 
-pre_compute_text_embeddings = True
+pre_compute_text_embeddings = False
 
 
-losses_to_test = ["", "identity", "triplet_prior"] # TODO #[ "", "syn_moco_identity"]
+losses_to_test = ["", "identity", "triplet_prior"] # TODO #[ "", "identity", "triplet_prior"]
 
 timestep_loss_weighting = True 
 
