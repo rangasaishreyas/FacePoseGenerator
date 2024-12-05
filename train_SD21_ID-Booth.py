@@ -1097,7 +1097,7 @@ def main(args):
                             
                             identity_loss = 1 - arcface_cos_similarity #((1 - arcface_cos_similarity) + (1 - arcface_cos_similarity_prior)) / 2 # TODO check is this ok                         
 
-                            identity_noise_level_weight = timesteps[0] / noise_scheduler.config.num_train_timesteps
+                            identity_noise_level_weight = (1 - timesteps[0] / noise_scheduler.config.num_train_timesteps) ** 2
                             if not cfg.timestep_loss_weighting: identity_noise_level_weight = 1 
                             
                             loss = loss + identity_noise_level_weight * identity_loss
@@ -1126,7 +1126,7 @@ def main(args):
                             img_cropped = cropped_image_to_arcface_input(img_cropped)
                             pred_arcface_features = arcface_model(img_cropped)
                             
-                            identity_noise_level_weight = timesteps[0] / noise_scheduler.config.num_train_timesteps
+                            identity_noise_level_weight = (1 - timesteps[0] / noise_scheduler.config.num_train_timesteps)  ** 2
                             if not cfg.timestep_loss_weighting: identity_noise_level_weight = 1 
 
                             # input: anchor, positive, negative
