@@ -27,12 +27,12 @@ expression_list = ["neutral", "happy", "sad", "angry", "shocked"]# "crying", "as
 expression_list = [f"{e} expression"  if e != "" else "" for e in expression_list]# "sad", "frowning", "surprised", "angry"]
 
 
-add_gender = True 
+add_gender = True
 # additions_list = expression_list
 # additions_list = [backgrounds_list, expression_list]
 
 num_samples_per_prompt = 1
-num_prompts = 10 #21 #50 #21 #len(additions_list)
+num_prompts = 21 #21 #50 #21 #len(additions_list)
 only_base_prompt = False
 device = "cuda:0"
 
@@ -40,16 +40,16 @@ seed = 0
 guidance_scale = 5.0
 num_inference_steps = 30 #30
 
-folder_of_models = "OUTPUT_MODELS/12-2024_SD21_LoRA4"
-checkpoint =  "checkpoint-9-2000"  #"checkpoint-12-2600"# "checkpoint-12-2600" 
-models_to_test = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_TimestepWeight"]
+folder_of_models = "OUTPUT_MODELS/12-2024_SD21_LoRA4_alphaW0.1_SKS_NotSquared"
+checkpoint =  "checkpoint-31-6400"  # "checkpoint-19-4000" #9-2000 #"checkpoint-12-2600"# "checkpoint-12-2600" 
+models_to_test = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_TimestepWeight"]#, "triplet_prior_loss_TimestepWeight_AlphaW0.1"]
+#models_to_test = ["triplet_prior_loss_TimestepWeight_AlphaW0.1"]
 
 architectures = ["stabilityai/stable-diffusion-2-1-base"]
 model_architecture = architectures[0]
 arch = model_architecture.split("/")[1]
 
-folder_output = "GENERATED_SAMPLES/SD21"
-
+folder_output = "GENERATED_SAMPLES/SD21_SKS_AlphaW01_NotSquared"
 
 face_alterations = ["", "curly hair", "long hair", "short hair", "face tattoos", "sunglasses"]
 # face_alterations = [f"with {alter}" if alter != "" else alter for alter in face_alterations]
@@ -72,10 +72,11 @@ width, height = 512, 512
 ids = os.listdir(os.path.join(folder_of_models, models_to_test[0]))
 ids = [i for i in ids if ".json" not in i]
 ids.sort(key=natural_keys)
+# ids = ["ID_3"]
 #ids = ids[3:15]
 #ids = ids[0:1]
 
-#ids = ["ID_1", "ID_2", "ID_3"]
+#ids = ["ID_20"]#, "ID_2", "ID_3"]
 print(ids)
 if add_gender:
     with open("../tufts_512_poses_1-7_all_imgs_jpg_per_ID/gender_dict.json", "r") as fp:
@@ -85,16 +86,17 @@ if add_gender:
 
 negative_prompt = "cartoon, cgi, render, illustration, painting, drawing, black and white, bad body proportions, landscape" # "cartoon, cgi, render, illustration, painting, drawing, black and white, bad body proportions" #"blurry, fake skin, plastic skin, cartoon, grayscale, painting, monochrome"
 # original_prompt =  "photo of sks person"#, aligned close-up portrait""#,  50 years old, sunglasses, forest"#, face tattoos"#, 10 years old"
-original_prompt = f"photo of sks person, close-up portrait"
+original_prompt = f"photo of sks person, close-up portrait, 50 years old"
 
 # generate seeds for each prompt number 
 num_seeds = len(ids) 
 
 # all_prompt_combinations = list(product(backgrounds_list, expression_list))
 
-all_prompt_combinations = list(product(ages, expression_list, backgrounds_list))
+all_prompt_combinations = list(product(expression_list, backgrounds_list))
 
 prompt = ""
+
 for id_number, which_id in enumerate(ids):
     print("\n", which_id) 
 
@@ -147,6 +149,7 @@ for id_number, which_id in enumerate(ids):
                     if addition != "":
                         prompt += f", {addition}"
 
+            # prompt += "old"
             #print(prompt)
             # generate samples
             for j in range(num_samples_per_prompt):
@@ -167,7 +170,7 @@ for id_number, which_id in enumerate(ids):
     comparison_folder = "COMPARISON"
     if only_base_prompt: comparison_folder += "_base"
     else: comparison_folder = comparison_folder + "_combo"
-    if add_gender: comparison_folder += "_gender"
+    if add_gender: comparison_folder += "_gender_Age"
     comparison_folder = os.path.join(folder_output, comparison_folder)
     os.makedirs(comparison_folder, exist_ok=True)
     save_path = f"{comparison_folder}/{which_id}_{checkpoint}_{arch}_{guidance_scale}.jpg"
