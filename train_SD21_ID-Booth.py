@@ -1096,11 +1096,13 @@ def main(args):
                             arcface_cos_similarity = cos(pred_arcface_features, gt_arcface_embed[0])
                             
                             identity_loss = 1 - arcface_cos_similarity #((1 - arcface_cos_similarity) + (1 - arcface_cos_similarity_prior)) / 2 # TODO check is this ok                         
-
-                            identity_noise_level_weight = (1 - timesteps[0] / noise_scheduler.config.num_train_timesteps) ** 2
+                            identity_noise_level_weight = (1 - timesteps[0] / noise_scheduler.config.num_train_timesteps) #** 2
+                           
                             if not cfg.timestep_loss_weighting: identity_noise_level_weight = 1 
-                            
-                            loss = loss + identity_noise_level_weight * identity_loss
+                            if cfg.alpha_id_loss_weighting is not None: 
+                                loss = (1 - cfg.alpha_id_loss_weighting) * loss + cfg.alpha_id_loss_weighting * identity_noise_level_weight * identity_loss
+                            else: 
+                                loss = loss + identity_noise_level_weight * identity_loss
                         #else: 
                         #    print("not detected", timesteps[0])
                     
@@ -1126,13 +1128,16 @@ def main(args):
                             img_cropped = cropped_image_to_arcface_input(img_cropped)
                             pred_arcface_features = arcface_model(img_cropped)
                             
-                            identity_noise_level_weight = (1 - timesteps[0] / noise_scheduler.config.num_train_timesteps)  ** 2
+                            identity_noise_level_weight = (1 - timesteps[0] / noise_scheduler.config.num_train_timesteps)  #** 2
                             if not cfg.timestep_loss_weighting: identity_noise_level_weight = 1 
 
                             # input: anchor, positive, negative
                             triplet_loss = triplet_loss_function(pred_arcface_features, gt_arcface_embed[0][None, :], gt_arcface_embed[1][None, :])
-                            loss = loss +  identity_noise_level_weight * triplet_loss
-                        
+                            
+                            if cfg.alpha_id_loss_weighting is not None: 
+                                loss = (1 - cfg.alpha_id_loss_weighting) * loss + cfg.alpha_id_loss_weighting * identity_noise_level_weight * triplet_loss
+                            else: 
+                                loss = loss + identity_noise_level_weight * triplet_loss
                 else:
                     loss = F.mse_loss(model_pred.float(), target.float(), reduction="mean")
                 
@@ -1321,8 +1326,10 @@ if __name__ == "__main__":
         # print(id_folders)
         #exit()
         id_folders.sort(key=natural_keys)
+        #id_folders = id_folders[:13]
+        #id_folders = ["ID_1", "ID_2", "ID_8", "ID_20"]
         # print(id_folders)
-        id_limit = 3# 5 # TODO  
+        id_limit = 0 # 5 # TODO  
         for i, id_folder in enumerate(id_folders): 
             print(id_folder)
             if id_limit != 0 and i > id_limit: 
