@@ -1,8 +1,8 @@
 
 mixed_precision = "fp16"
+
 pretrained_model_name_or_path =  "stabilityai/stable-diffusion-xl-base-1.0"
-pretrained_vae_model_name_or_path = None # "aujbvoOPxJynWXSwOCKjONnysgjnsZAX/SDXL_fixedvae_fp16" #"madebyollin/sdxl-vae-fp16-fix" # TODO was None
-    
+pretrained_vae_model_name_or_path = "madebyollin/sdxl-vae-fp16-fix" # TODO was None
 
 logging_dir = "Logs"
 

@@ -74,17 +74,20 @@ train_batch_size = 1
 lora_rank = 4
 
 learning_rate = 1e-4 # 1e-4 # TODO  
-num_train_epochs = 20 #20 # 10 #2 # TODO
-checkpointing_epochs = 5
-validation_epochs = 5 #1 
+num_train_epochs = 32 #20 # 10 #2 # TODO
+checkpointing_epochs = 8 # 5
+validation_epochs = 8 #5 #1 
 
 pre_compute_text_embeddings = False
 
+losses_to_test = ["", "identity",  "triplet_prior"] # "identity", 
+#losses_to_test = [""]
 
-losses_to_test = ["", "identity", "triplet_prior"] # TODO #[ "", "identity", "triplet_prior"]
 
 timestep_loss_weighting = True 
+alpha_id_loss_weighting = 0.1
+# or maybe 0.2? TODO 
 
-output_folder = f"OUTPUT_MODELS/12-2024_SD21_LoRA{lora_rank}/" 
+output_folder = f"OUTPUT_MODELS/12-2024_SD21_LoRA{lora_rank}_alphaW{alpha_id_loss_weighting}_SKS_NotSquared/" 
 validation_prompt_path = "FACE_DATASETS/Samples_for_validation/validation_prompt.pt"
 show_tqdm = True
