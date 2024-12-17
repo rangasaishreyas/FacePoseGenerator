@@ -60,14 +60,16 @@ class InferenceDataset(Dataset):
         if self.folder_structure:
             tmp = os.path.dirname(img_path)
             img_file = ojoin(os.path.basename(tmp), img_file)
-        # TODO RGB is correct, not CV2 BGR  
-        og_img = Image.open(self.img_paths[index])
-
-        width, height = og_img.size
-        img = Image.new(og_img.mode, (width*2, height*2), 0)
-        img.paste(og_img, (width, height))
         
+        img = Image.open(self.img_paths[index])
         img = np.array(img)
+
+        h, w, c = img.shape
+        extra_left_right = w//2 
+        extra_top_bot = h//2 
+        
+        img = np.pad(img, ((extra_top_bot, extra_top_bot), (extra_left_right, extra_left_right), (0, 0)),
+                     mode='constant', constant_values=0)
 
         return img, img_file
 
