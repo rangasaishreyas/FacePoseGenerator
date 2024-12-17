@@ -8,16 +8,15 @@ import re
 import json 
 from PIL import Image 
 import numpy as np
-
+from utils.sorting_utils import natural_keys
 # from utils.align_trans import norm_crop
-
+import torchvision.transforms as transforms
 from facenet_pytorch import MTCNN
 from skimage import transform as trans
 
 
 mtcnn = MTCNN(
-    select_largest=False, device="cuda:0" 
-    #select_largest=True, min_face_size=60, post_process=False, device="cuda:0"
+    select_largest=True, post_process=False, device="cuda:0"
 )
 
 
@@ -62,8 +61,14 @@ class InferenceDataset(Dataset):
             tmp = os.path.dirname(img_path)
             img_file = ojoin(os.path.basename(tmp), img_file)
         # TODO RGB is correct, not CV2 BGR  
-        img = np.array(Image.open(self.img_paths[index]))
-        #img = cv2.imread(self.img_paths[index])
+        og_img = Image.open(self.img_paths[index])
+
+        width, height = og_img.size
+        img = Image.new(og_img.mode, (width*2, height*2), 0)
+        img.paste(og_img, (width, height))
+        
+        img = np.array(img)
+
         return img, img_file
 
     def __len__(self):
@@ -89,7 +94,6 @@ def align_images(in_folder, out_folder, batchsize, id_fold="", num_imgs=0):
     )
 
     skipped_imgs = []
-    counter = 0
     id_number = id_fold.split("_")[1]
 
     for img_batch, img_names in (train_loader):
@@ -173,19 +177,6 @@ def norm_crop(img, landmark, image_size=112):
     return warped
 
 
-##############################################
-def atoi(text):
-    return int(text) if text.isdigit() else text
-
-def natural_keys(text):
-    '''
-    alist.sort(key=natural_keys) sorts in human order
-    http://nedbatchelder.com/blog/200712/human_sorting.html
-    (See Toothy's implementation in the comments)
-    '''
-    return [ atoi(c) for c in re.split(r'(\d+)', text) ]
-##############################################
-
 arcface_ref_points = np.array(
     [
         [30.2946, 51.6963],
@@ -227,10 +218,9 @@ def main():
 
     args = parser.parse_args()
     
-    which_folders = ["SD21_generated"]#, "SD21_pretrained_combined", "SDXL_pretrained_base_prompt", "SDXL_pretrained_combined"]
+    # which_folders = os.listdir("GENERATED_SAMPLES")
+    which_folders = ["12-2024_SD21_LoRA4_alphaW0.1_Expr_Env"]#, "SD21_pretrained_combined", "SDXL_pretrained_base_prompt", "SDXL_pretrained_combined"]
     for which_folder in which_folders:
-        #which_folder= "SDXL_DB_LoRA_Tufts_combined_16_07_png"
-        #which_folder = "SD21_DB_LoRA_Tufts_base_prompt_04_08_png"#"SD21_30-06_EXP_BusyEnvironment_GenderBased"
         args.in_folder = f"GENERATED_SAMPLES/{which_folder}"
         print(which_folder)
         args.out_folder = f"FR_DATASETS/{args.in_folder.split('/')[-1]}"#"Testing_Naser_aligned_samples"
@@ -247,7 +237,6 @@ def main():
             id_folders.sort(key=natural_keys)
 
             for id_fold in tqdm(id_folders):
-                #print(id_fold)
                 current_in_folder = os.path.join(args.in_folder, model_fold, id_fold)
                 current_out_folder = os.path.join(args.out_folder, model_fold)
                 missing_images = align_images(
@@ -257,11 +246,9 @@ def main():
                     id_fold=id_fold,
                     num_imgs=args.num_imgs
                 )
-                #break
                 missing_images_dict[model_fold][id_fold] = missing_images
             
-            # missing_images_dict[model_fold] = missing_images
-            # Convert and write JSON object to file
+        # Convert and write JSON object to file
         with open(f"{args.out_folder}/missing_images.json", "w") as outfile: 
             json.dump(missing_images_dict, outfile, indent=4)
         
