@@ -12,12 +12,7 @@ import json
 #from compel import Compel
 from diffusers import AutoPipelineForText2Image
 from itertools import product 
-
-def atoi(text):
-        return int(text) if text.isdigit() else text
-
-def natural_keys(text):
-    return [ atoi(c) for c in re.split(r'(\d+)', text) ]
+from utils.sorting_utils import natural_keys
 
 backgrounds_list = ["", "forest", "city street", "beach", "office", "bus", "laboratory", "factory", "construction site", "hospital", "night club"]
 backgrounds_list = [f"busy {b} environment"  if b != "" else "" for b in backgrounds_list]#
@@ -33,23 +28,26 @@ add_gender = True
 
 num_samples_per_prompt = 1
 num_prompts = 21 #21 #50 #21 #len(additions_list)
-only_base_prompt = False
+only_base_prompt = True
 device = "cuda:0"
 
 seed = 0 
 guidance_scale = 5.0
 num_inference_steps = 30 #30
 
-folder_of_models = "OUTPUT_MODELS/12-2024_SD21_LoRA4_alphaW0.1_SKS_NotSquared"
+which_model_folder = "12-2024_SD21_LoRA4_alphaW0.1"  #0.1 # None
+folder_of_models = f"OUTPUT_MODELS/{which_model_folder}" #0.1
 checkpoint =  "checkpoint-31-6400"  # "checkpoint-19-4000" #9-2000 #"checkpoint-12-2600"# "checkpoint-12-2600" 
 models_to_test = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_TimestepWeight"]#, "triplet_prior_loss_TimestepWeight_AlphaW0.1"]
 #models_to_test = ["triplet_prior_loss_TimestepWeight_AlphaW0.1"]
+folder_output = f"GENERATED_SAMPLES/{which_model_folder}_Base"
+
 
 architectures = ["stabilityai/stable-diffusion-2-1-base"]
 model_architecture = architectures[0]
 arch = model_architecture.split("/")[1]
 
-folder_output = "GENERATED_SAMPLES/SD21_SKS_AlphaW01_NotSquared"
+
 
 face_alterations = ["", "curly hair", "long hair", "short hair", "face tattoos", "sunglasses"]
 # face_alterations = [f"with {alter}" if alter != "" else alter for alter in face_alterations]
@@ -72,28 +70,25 @@ width, height = 512, 512
 ids = os.listdir(os.path.join(folder_of_models, models_to_test[0]))
 ids = [i for i in ids if ".json" not in i]
 ids.sort(key=natural_keys)
-# ids = ["ID_3"]
-#ids = ids[3:15]
-#ids = ids[0:1]
+# ids = ids[:2]
 
-#ids = ["ID_20"]#, "ID_2", "ID_3"]
 print(ids)
 if add_gender:
-    with open("../tufts_512_poses_1-7_all_imgs_jpg_per_ID/gender_dict.json", "r") as fp:
+    with open("/shared/home/darian.tomasevic/ID-Booth/FACE_DATASETS/tufts_512_poses_1-7_all_imgs_jpg_per_ID/gender_dict.json", "r") as fp:
         gender_dict = json.load(fp)
 
 # ids = ids[:1]
 
 negative_prompt = "cartoon, cgi, render, illustration, painting, drawing, black and white, bad body proportions, landscape" # "cartoon, cgi, render, illustration, painting, drawing, black and white, bad body proportions" #"blurry, fake skin, plastic skin, cartoon, grayscale, painting, monochrome"
 # original_prompt =  "photo of sks person"#, aligned close-up portrait""#,  50 years old, sunglasses, forest"#, face tattoos"#, 10 years old"
-original_prompt = f"photo of sks person, close-up portrait, 50 years old"
+original_prompt = f"photo of sks person, close-up portrait"
 
 # generate seeds for each prompt number 
 num_seeds = len(ids) 
 
 # all_prompt_combinations = list(product(backgrounds_list, expression_list))
 
-all_prompt_combinations = list(product(expression_list, backgrounds_list))
+all_prompt_combinations = list(product(ages, expression_list))#, backgrounds_list))
 
 prompt = ""
 
@@ -175,5 +170,5 @@ for id_number, which_id in enumerate(ids):
     os.makedirs(comparison_folder, exist_ok=True)
     save_path = f"{comparison_folder}/{which_id}_{checkpoint}_{arch}_{guidance_scale}.jpg"
     print(save_path)
-    save_image(images, fp=save_path, nrow=num_prompts*num_samples_per_prompt, padding=10)
+    save_image(images, fp=save_path, nrow=num_prompts*num_samples_per_prompt, padding=0)
     #break

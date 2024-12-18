@@ -50,8 +50,8 @@ def split_gen_imp(embeddings, num_ids, args, min_samples=3):
     #num_ids = len(embeddings)
     print("Create genuine and impostor pairs... num_ids:", num_ids)
     
-    min_samples = 2 #2 # 9
-    samples_skip = 16 #16
+    min_samples = 8 #2 # 9
+    samples_skip = 18 #16
     # if "COMBINED" in args.datadir: 
     #     min_samples = 12 #6
     #     samples_skip = 1 #10 

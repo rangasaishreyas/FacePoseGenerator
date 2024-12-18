@@ -22,16 +22,12 @@ from create_genuine_and_impostor_files import run_create_gen_imp_files
 
 #dataset_folder = "../GENERATED_SAMPLES_Turbo/27-10_SD21_LoRA32_LR0.0001_GS0.0_Steps4"
 #dataset_folder = "../Generated_Split_Images_112x112"
-dataset_folder = "../FR-Ready_Datasets"
+main_folder = "/shared/home/darian.tomasevic/ID-Booth/FR_DATASETS/"
+dataset_folders = ["12-2024_SD21_LoRA4_alphaWNone_Expr_Env", "12-2024_SD21_LoRA4_alphaWNone_Age_Expr", "12-2024_SD21_LoRA4_alphaWNone_Age", 
+                   "12-2024_SD21_LoRA4_alphaW0.1_Expr_Env", "12-2024_SD21_LoRA4_alphaW0.1_Age_Expr", "12-2024_SD21_LoRA4_alphaW0.1_Age"]
 
-#subfolders = ["no_new_loss_checkpoint-9-87500", "syn_moco_identity_loss_checkpoint-9-87500", "syn_moco_identity_loss_RandomAugments_checkpoint-9-87500"]
-#subfolders = [sub + "_Part0" for sub in subfolders]
-# 
-subfolders = ["webface_112x112_folders_jpg_renamed"]
+subfolders = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_TimestepWeight"]
 
-
-
-main_folder = f"RESULTS/{os.path.basename(dataset_folder)}"
 
 # create pyeer report
 report_which_metrics = [
@@ -90,63 +86,66 @@ def plot_score_histogram(ax, df, stats, which_stat):
 ############################
 
 
+for dataset_folder in dataset_folders:
+    dataset_folder = os.path.join(main_folder, dataset_folder)
 
-for subfolder in subfolders:
-    data_folder = os.path.join(dataset_folder, subfolder)
-    which_FR_model = "backbones/ArcFace_r100_ms1mv3_backbone.pth"
+    output_folder = os.path.join("RESULTS", os.path.basename(dataset_folder))
 
-    #"DREAMBOOTH_ANALYSIS/"
-    
-    run_create_gen_imp_files(datadir=data_folder, fr_path=which_FR_model, outdir=main_folder)
-    #!python create_genuine_and_impostor_files_ID-Diff.py --datadir=$data_folder --fr_path=$which_FR_model --outdir=$main_folder
+    for subfolder in subfolders:
+        data_folder = os.path.join(dataset_folder, subfolder)
+        which_FR_model = "backbones/ArcFace_r100_ms1mv3_backbone.pth"
 
-    print(subfolder)
-    folder = os.path.join(main_folder,  subfolder.replace("/","__"))
-    print("Folder", folder)
-    gscore_file = os.path.join(folder, "genuines.txt")
-    iscore_file = os.path.join(folder, "impostors.txt")
+        run_create_gen_imp_files(datadir=data_folder, fr_path=which_FR_model, outdir=output_folder)
 
-    genuine_scores = pd.read_csv(gscore_file, header=None)[0].to_list()
-    impostor_scores = pd.read_csv(iscore_file, header=None)[0].to_list()
+        print(subfolder)
+        folder = os.path.join(output_folder,  subfolder.replace("/","__"))
+        print("Folder", folder)
+        gscore_file = os.path.join(folder, "genuines.txt")
+        iscore_file = os.path.join(folder, "impostors.txt")
 
-    # Calculating stats
-    stats = get_eer_stats(genuine_scores, impostor_scores)
-    stats = stats._asdict()
-    print(stats.keys())
+        genuine_scores = pd.read_csv(gscore_file, header=None)[0].to_list()
+        impostor_scores = pd.read_csv(iscore_file, header=None)[0].to_list()
 
-    stats["fdr"] = compute_fdr(stats)
-    
-    saving_dict = dict()
-    for metric in report_which_metrics:
-        print(f"{metric}: {stats[metric]}")
-        saving_dict[metric] = stats[metric]
+        # Calculating stats
+        stats = get_eer_stats(genuine_scores, impostor_scores)
+        stats = stats._asdict()
+        print(stats.keys())
+
+        stats["fdr"] = compute_fdr(stats)
+        
+        saving_dict = dict()
+        for metric in report_which_metrics:
+            print(f"{metric}: {stats[metric]}")
+            saving_dict[metric] = stats[metric]
 
 
-    #with open(os.path.join(folder, "PyEER_report_" + subfolder.replace("/", "__"))+".json", "w") as outfile:
-    with open(os.path.join(folder, "PyEER_report.json"), "w") as outfile:
-        json.dump(saving_dict, outfile, indent=4)
-        print("==" * 30)
+        #with open(os.path.join(folder, "PyEER_report_" + subfolder.replace("/", "__"))+".json", "w") as outfile:
+        with open(os.path.join(folder, "PyEER_report.json"), "w") as outfile:
+            json.dump(saving_dict, outfile, indent=4)
+            print("==" * 30)
 
-    currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-    parentdir = os.path.dirname(currentdir)
-    sys.path.insert(0, parentdir)
+        currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+        parentdir = os.path.dirname(currentdir)
+        sys.path.insert(0, parentdir)
 
-    datadir =  os.path.join(main_folder, subfolder.replace("/", "__"))#"Synth_100_subset_preprocess_both_classes"
-    print(datadir)
-    save_dir = os.path.join(datadir)
+        datadir =  os.path.join(output_folder, subfolder.replace("/", "__"))#"Synth_100_subset_preprocess_both_classes"
+        print(datadir)
+        save_dir = os.path.join(datadir)
 
-    gen_sims = list(np.loadtxt(os.path.join(datadir, "genuines.txt")))
-    impo_sims = list(np.loadtxt(os.path.join(datadir, "impostors.txt")))
+        gen_sims = list(np.loadtxt(os.path.join(datadir, "genuines.txt")))
+        impo_sims = list(np.loadtxt(os.path.join(datadir, "impostors.txt")))
 
-    # Plot 
-    df = pd.DataFrame()
-    df['scores'] = gen_sims + impo_sims
-    df['label'] = ['Genuine'] * len(gen_sims) + ['Imposter'] * len(impo_sims)
+        # Plot 
+        df = pd.DataFrame()
+        df['scores'] = gen_sims + impo_sims
+        df['label'] = ['Genuine'] * len(gen_sims) + ['Imposter'] * len(impo_sims)
 
-    fig = plt.figure()#figsize=(8, 8))
-    plot_score_histogram(plt.gca(), df, stats, which_stat="probability")
-    plt.tight_layout()
-    savename = os.path.join(save_dir, "distribution_" + subfolder.replace("/", "__") + ".png")
-    print("Saving to:", savename)
-    plt.savefig(savename, dpi=256)
-    plt.close(fig)
+        fig = plt.figure()#figsize=(8, 8))
+        plot_score_histogram(plt.gca(), df, stats, which_stat="probability")
+        plt.tight_layout()
+        savename = os.path.join(save_dir, "distribution_" + subfolder.replace("/", "__") + ".png")
+        print("Saving to:", savename)
+        plt.savefig(savename, dpi=256)
+        plt.close(fig)
+
+        print("====" * 30)

@@ -38,7 +38,7 @@ instance_prompt = "photo of sks person" # "face portrait photo of fid person"
 
 with_prior_preservation = True  
 class_prompt = "photo of a person" #"face portrait photo of a person" #
-class_data_dir ="/shared/home/darian.tomasevic/ID-Booth/CLASS_IMAGES/200_prior_imgs_new/images" # "./CLASS_IMAGES/epiCRealism_SD15/images"
+class_data_dir ="/shared/home/darian.tomasevic/ID-Booth/CLASS_IMAGES/SD21_Class_imgs_200/images" # "./CLASS_IMAGES/epiCRealism_SD15/images"
 num_class_images = 200 
 prior_loss_weight = 1.0
 
@@ -74,9 +74,9 @@ train_batch_size = 1
 lora_rank = 4
 
 learning_rate = 1e-4 # 1e-4 # TODO  
-num_train_epochs = 20 #20 # 10 #2 # TODO
-checkpointing_epochs = 5
-validation_epochs = 5 #1 
+num_train_epochs = 32 #20 # 10 #2 # TODO
+checkpointing_epochs = 8 # 5
+validation_epochs = 8 #5 #1 
 
 pre_compute_text_embeddings = False
 
@@ -84,7 +84,9 @@ pre_compute_text_embeddings = False
 losses_to_test = [""]#, "identity", "triplet_prior"] # TODO #[ "", "identity", "triplet_prior"]
 
 timestep_loss_weighting = True 
+alpha_id_loss_weighting = 0.1
+# or maybe 0.2? TODO 
 
-output_folder = f"OUTPUT_MODELS/12-2024_SD21_LoRA{lora_rank}/" 
+output_folder = f"OUTPUT_MODELS/12-2024_SD21_LoRA{lora_rank}" 
 validation_prompt_path = "FACE_DATASETS/Samples_for_validation/validation_prompt.pt"
 show_tqdm = True
