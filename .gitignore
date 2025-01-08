@@ -20,3 +20,6 @@ backup*
 *images_during_training*
 *Face_recognition_training*
 *FR_DATASETS*
+*FR_Features*
+*FR_Results*
+*.zip*
