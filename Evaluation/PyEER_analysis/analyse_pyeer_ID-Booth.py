@@ -23,8 +23,15 @@ from create_genuine_and_impostor_files import run_create_gen_imp_files
 #dataset_folder = "../GENERATED_SAMPLES_Turbo/27-10_SD21_LoRA32_LR0.0001_GS0.0_Steps4"
 #dataset_folder = "../Generated_Split_Images_112x112"
 main_folder = "/shared/home/darian.tomasevic/ID-Booth/FR_DATASETS/"
-dataset_folders = ["12-2024_SD21_LoRA4_alphaWNone_Expr_Env", "12-2024_SD21_LoRA4_alphaWNone_Age_Expr", "12-2024_SD21_LoRA4_alphaWNone_Age", 
-                   "12-2024_SD21_LoRA4_alphaW0.1_Expr_Env", "12-2024_SD21_LoRA4_alphaW0.1_Age_Expr", "12-2024_SD21_LoRA4_alphaW0.1_Age"]
+# dataset_folders = ["12-2024_SD21_LoRA4_alphaWNone_Expr_Env", "12-2024_SD21_LoRA4_alphaWNone_Age_Expr", "12-2024_SD21_LoRA4_alphaWNone_Age", 
+#                   "12-2024_SD21_LoRA4_alphaW0.1_Expr_Env", "12-2024_SD21_LoRA4_alphaW0.1_Age_Expr", "12-2024_SD21_LoRA4_alphaW0.1_Age"]
+
+# dataset_folders = ["12-2024_SD21_LoRA4_alphaW0.1_Face",
+#                    "12-2024_SD21_LoRA4_alphaW0.1_Face_Environments",
+#                    "12-2024_SD21_LoRA4_alphaW0.1_Face_Environments_Ages",
+#                    "12-2024_SD21_LoRA4_alphaW0.1_Face_Poses",
+#                    "12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments"]
+dataset_folders = ["12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments_Ages"]
 
 subfolders = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_TimestepWeight"]
 
@@ -82,7 +89,8 @@ def plot_score_histogram(ax, df, stats, which_stat):
     ax.set_ylabel("Probability", size=14)
 
     #plt.legend(loc="upper left")
-    #ax.set_ylim(0, 0.075)
+    ax.set_ylim(0, 0.045)
+    ax.set_xlim(-0.25, 0.95)
 ############################
 
 

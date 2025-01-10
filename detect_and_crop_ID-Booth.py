@@ -78,7 +78,7 @@ class InferenceDataset(Dataset):
         return len(self.img_paths)
 
 
-def align_images(in_folder, out_folder, batchsize, id_fold="", num_imgs=0):
+def align_images(in_folder, out_folder, batchsize, id_mapping_dict, id_fold="", num_imgs=0):
     """MTCNN alignment for all images in in_folder and save to out_folder
     args:
             in_folder: folder path with images
@@ -119,7 +119,7 @@ def align_images(in_folder, out_folder, batchsize, id_fold="", num_imgs=0):
             )
             warped_face = Image.fromarray(warped_face)
             # img_name = "%05d.png" % (counter)
-            warped_face.save(os.path.join(out_folder, f"{id_number}_{img_name}"))
+            warped_face.save(os.path.join(out_folder, f"{id_mapping_dict[int(id_number)]}_{img_name}"))
             
             #cv2.imwrite(os.path.join(out_folder, f"{id_number}_{img_name}"), warped_face)
             # counter += 1
@@ -221,9 +221,20 @@ def main():
     args = parser.parse_args()
     
     # which_folders = os.listdir("GENERATED_SAMPLES")
-    which_folders = ["12-2024_SD21_LoRA4_alphaW0.1_Expr_Env"]#, "SD21_pretrained_combined", "SDXL_pretrained_base_prompt", "SDXL_pretrained_combined"]
+    which_folders = ["12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments_Ages",
+                    ]#"12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments_Ages"]
+    
+    #which_folders = ["FACE_DATASETS/tufts_512_poses_1-7_all_imgs_jpg_per_ID"]
+    #which_folders = ["../ID-Diff/FACE_DATASETS/FFHQ_512"]
+    
+    # mapping for ids to consecutive numbers! 
+    id_mapping_dict = None 
+    
+    
+
     for which_folder in which_folders:
         args.in_folder = f"GENERATED_SAMPLES/{which_folder}"
+        #args.in_folder = which_folder
         print(which_folder)
         args.out_folder = f"FR_DATASETS/{args.in_folder.split('/')[-1]}"#"Testing_Naser_aligned_samples"
         args.batchsize = 8
@@ -231,12 +242,17 @@ def main():
         model_folders = os.listdir(args.in_folder)
 
         missing_images_dict = dict()
+
         for model_fold in model_folders:
             if "COMPARISON_" in model_fold: continue 
             print(model_fold)
             missing_images_dict[model_fold] = dict()
             id_folders = os.listdir(os.path.join(args.in_folder, model_fold))
             id_folders.sort(key=natural_keys)
+
+            print("Map ids to consecutive numbers")
+            if id_mapping_dict is None: 
+                id_mapping_dict = {int(idx.split("_")[1]):i for i, idx in enumerate(id_folders)}
 
             for id_fold in tqdm(id_folders):
                 current_in_folder = os.path.join(args.in_folder, model_fold, id_fold)
@@ -245,6 +261,7 @@ def main():
                     current_in_folder,
                     current_out_folder,
                     args.batchsize,
+                    id_mapping_dict,
                     id_fold=id_fold,
                     num_imgs=args.num_imgs
                 )

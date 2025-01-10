@@ -234,6 +234,15 @@ def parse_args(input_args=None):
         help="Which ID to train the model on, e.g. 'ID_1'.",
     )
 
+    parser.add_argument(
+        "--alphaW",
+        type=str,
+        default=None,
+        required=False,
+        help="What additional weight to use for ID weighting. Currently: ['None', '0.1']",
+    )
+
+
     if input_args is not None:
         args = parser.parse_args(input_args)
     else:
@@ -971,13 +980,13 @@ def main(args):
     else:
         initial_global_step = 0
 
-    progress_bar = tqdm(
-        range(0, cfg.max_train_steps),
-        initial=initial_global_step,
-        desc="Steps",
-        # Only show the progress bar once on each machine.
-        disable=not accelerator.is_local_main_process,
-    )
+    # progress_bar = tqdm(
+    #     range(0, cfg.max_train_steps),
+    #     initial=initial_global_step,
+    #     desc="Steps",
+    #     # Only show the progress bar once on each machine.
+    #     disable=not accelerator.is_local_main_process,
+    # )
 
     ###########################################################
     # ArcFaceModel for Loss 
@@ -1162,7 +1171,7 @@ def main(args):
 
             # Checks if the accelerator has performed an optimization step behind the scenes
             if accelerator.sync_gradients:
-                progress_bar.update(1)
+                #progress_bar.update(1)
                 global_step += 1
 
             step_loss = loss.detach().item()
@@ -1183,7 +1192,7 @@ def main(args):
 
             logs = {"Step Loss/Reconstruction": step_instance_loss, "Step Loss/ID": step_id_loss,  
                     "Step Loss/Prior": step_prior_loss, "Step Loss/Combined": step_loss, "LR": lr_scheduler.get_last_lr()[0]}
-            progress_bar.set_postfix(**logs)
+            #progress_bar.set_postfix(**logs)
             accelerator.log(logs, step=global_step)
 
             if cfg.max_train_steps is not None and global_step >= cfg.max_train_steps:
@@ -1303,10 +1312,17 @@ if __name__ == "__main__":
     id_folders = os.listdir(cfg.source_folder)
     cfg.which_loss = args.loss
     id_folder = args.id
-
+    if args.alphaW == "None":
+        cfg.alpha_id_loss_weighting = None 
+    elif args.alphaW == "0.1":
+        cfg.alpha_id_loss_weighting = 0.1
+    else: 
+        exit() 
+    
     #for which_loss in cfg.losses_to_test:#["triplet_prior"]:#,# "identity", "triplet_prior"]:#["", "identity", "triplet_prior"]:
     #    cfg.which_loss = which_loss
-    output_folder = cfg.output_folder
+    output_folder = cfg.output_folder + f"_alphaW{cfg.alpha_id_loss_weighting}/"
+    
     if cfg.which_loss != "": 
         output_folder +=  cfg.which_loss + "_loss" #+ "_" + cfg.comment
         if not cfg.timestep_loss_weighting:
@@ -1318,6 +1334,7 @@ if __name__ == "__main__":
     
     if cfg.train_text_encoder: 
         output_folder += "_WithTextEncoder"
+
 
     cfg.instance_data_dir = cfg.source_folder
     args.output_dir = output_folder
@@ -1337,4 +1354,9 @@ if __name__ == "__main__":
     print(id_folder)
     cfg.instance_data_dir = os.path.join(cfg.source_folder, id_folder) # "./DATASETS/TUFTS_TEST_512/images_id_1"
     args.output_dir = os.path.join(output_folder, id_folder) 
+    
+    if os.path.exists(os.path.join(args.output_dir, f"checkpoint-31-6400")):
+        print("We have already trained the model for this ID. Skip it.")
+        exit()
+
     main(args)

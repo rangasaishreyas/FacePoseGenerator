@@ -51,7 +51,7 @@ def split_gen_imp(embeddings, num_ids, args, min_samples=3):
     print("Create genuine and impostor pairs... num_ids:", num_ids)
     
     min_samples = 8 #2 # 9
-    samples_skip = 18 #16
+    samples_skip = 19 #16
     # if "COMBINED" in args.datadir: 
     #     min_samples = 12 #6
     #     samples_skip = 1 #10 
@@ -302,7 +302,7 @@ def run_create_gen_imp_files(datadir, fr_path, outdir):
     num_ids = 0 
     batchsize = 16
     num_imgs = 0
-    seed = 0 #0 #42  #100
+    seed = 24 #0 #42  #100
     set_all_seeds(seed)
 
     args = Namespace(datadir = datadir,
