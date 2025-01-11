@@ -14,23 +14,31 @@ from diffusers import AutoPipelineForText2Image
 from itertools import product 
 from utils.sorting_utils import natural_keys
 
-backgrounds_list = ["", "forest", "city street", "beach", "office", "bus", "laboratory", "factory", "construction site", "hospital", "night club"]
-backgrounds_list = [f"busy {b} environment"  if b != "" else "" for b in backgrounds_list]#
+backgrounds_list = ["forest", "city street", "beach", "office", "bus", "laboratory", "factory", "construction site", "hospital", "night club"]
+#backgrounds_list = ["in the forest", "in the city", "at the beach", "at the office", "in the bus", "in the laboratory", "at the factory", "at the construction site", "at the hospital", "at the night club"]
+backgrounds_list = [f"busy {b}"  if b != "" else "" for b in backgrounds_list]#
+backgrounds_list = [""] + backgrounds_list * 2
 
-expression_list = ["neutral", "happy", "sad", "angry", "shocked"]# "crying", "ashamed"]
+# expression_list = ["neutral", "happy", "sad", "angry", "shocked"]# "crying", "ashamed"]
+# expression_list = [f"{e} expression"  if e != "" else "" for e in expression_list]# "sad", "frowning", "surprised", "angry"]
 
-expression_list = [f"{e} expression"  if e != "" else "" for e in expression_list]# "sad", "frowning", "surprised", "angry"]
+# face_alterations = ["", "curly hair", "long hair", "short hair", "face tattoos", "sunglasses"]
+# face_alterations = [f"with {alter}" if alter != "" else alter for alter in face_alterations]
 
+# clothing = ["", "turtleneck", "sweater", "t-shirt", "shirt", "suit", "hat and sunglasses", "glasses"]
+# clothing = [f"wearing a {cloth}" if cloth != "" else cloth for cloth in clothing]
 
-add_gender = True
-# additions_list = expression_list
-# additions_list = [backgrounds_list, expression_list]
+# ages = ["20", "30", "40", "50", "60"]
+# ages = [f"{a} years old" for a in ages]
+
 
 num_samples_per_prompt = 1
 num_prompts = 21 #21 #50 #21 #len(additions_list)
-only_base_prompt = True
-device = "cuda:0"
+add_gender = True
+only_base_prompt = False
+add_pose = False
 
+device = "cuda:0"
 seed = 0 
 guidance_scale = 5.0
 num_inference_steps = 30 #30
@@ -38,32 +46,14 @@ num_inference_steps = 30 #30
 which_model_folder = "12-2024_SD21_LoRA4_alphaW0.1"  #0.1 # None
 folder_of_models = f"OUTPUT_MODELS/{which_model_folder}" #0.1
 checkpoint =  "checkpoint-31-6400"  # "checkpoint-19-4000" #9-2000 #"checkpoint-12-2600"# "checkpoint-12-2600" 
-models_to_test = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_TimestepWeight"]#, "triplet_prior_loss_TimestepWeight_AlphaW0.1"]
-#models_to_test = ["triplet_prior_loss_TimestepWeight_AlphaW0.1"]
-folder_output = f"GENERATED_SAMPLES/{which_model_folder}_Base"
-
+models_to_test = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_TimestepWeight"]
+folder_output = f"GENERATED_SAMPLES/{which_model_folder}_HeadShot_Photo"
 
 architectures = ["stabilityai/stable-diffusion-2-1-base"]
 model_architecture = architectures[0]
 arch = model_architecture.split("/")[1]
 
-
-
-face_alterations = ["", "curly hair", "long hair", "short hair", "face tattoos", "sunglasses"]
-# face_alterations = [f"with {alter}" if alter != "" else alter for alter in face_alterations]
-
-#clothing = ["", "turtleneck", "sweater", "t-shirt", "shirt", "suit", "hat and sunglasses", "glasses"]
-#clothing = [f"wearing a {cloth}" if cloth != "" else cloth for cloth in clothing]
-# does it need "wearing a"
-# TODO ... do we even need clothing (it changes randomly does it not?)
-
-#backgrounds = ["", "forest", "brick wall", "busy street", "beach", "office", "shopping mall"]
-
-ages = ["20", "30", "40", "50", "60"]
-ages = [f"{a} years old" for a in ages]
-
 set_seed(seed)
-
 
 width, height = 512, 512
 
@@ -74,21 +64,21 @@ ids.sort(key=natural_keys)
 
 print(ids)
 if add_gender:
-    with open("/shared/home/darian.tomasevic/ID-Booth/FACE_DATASETS/tufts_512_poses_1-7_all_imgs_jpg_per_ID/gender_dict.json", "r") as fp:
+    with open("tufts_gender_dict.json", "r") as fp:
         gender_dict = json.load(fp)
 
 # ids = ids[:1]
 
 negative_prompt = "cartoon, cgi, render, illustration, painting, drawing, black and white, bad body proportions, landscape" # "cartoon, cgi, render, illustration, painting, drawing, black and white, bad body proportions" #"blurry, fake skin, plastic skin, cartoon, grayscale, painting, monochrome"
 # original_prompt =  "photo of sks person"#, aligned close-up portrait""#,  50 years old, sunglasses, forest"#, face tattoos"#, 10 years old"
-original_prompt = f"photo of sks person, close-up portrait"
+original_prompt = f"headshot photo of sks person"
 
 # generate seeds for each prompt number 
 num_seeds = len(ids) 
 
 # all_prompt_combinations = list(product(backgrounds_list, expression_list))
 
-all_prompt_combinations = list(product(ages, expression_list))#, backgrounds_list))
+all_prompt_combinations = list(backgrounds_list) #list(product(ages, expression_list))#, backgrounds_list))
 
 prompt = ""
 
@@ -139,10 +129,15 @@ for id_number, which_id in enumerate(ids):
             prompt = original_prompt
             
             if add_gender: prompt = prompt.replace(" sks person", f" {gender} sks person")
+            if add_pose and random.choice([True, False]):
+                prompt = prompt.replace("portrait", "side-portrait")
             if len(prompt_additions) != 0 and not only_base_prompt:
-                for addition in prompt_additions:
-                    if addition != "":
-                        prompt += f", {addition}"
+                if isinstance(prompt_additions, str): 
+                    prompt += f", {prompt_additions}"  
+                else:
+                    for addition in prompt_additions:
+                        if addition != "":
+                            prompt += f", {addition}"
 
             # prompt += "old"
             #print(prompt)
@@ -165,7 +160,7 @@ for id_number, which_id in enumerate(ids):
     comparison_folder = "COMPARISON"
     if only_base_prompt: comparison_folder += "_base"
     else: comparison_folder = comparison_folder + "_combo"
-    if add_gender: comparison_folder += "_gender_Age"
+    if add_gender: comparison_folder += "_gender"
     comparison_folder = os.path.join(folder_output, comparison_folder)
     os.makedirs(comparison_folder, exist_ok=True)
     save_path = f"{comparison_folder}/{which_id}_{checkpoint}_{arch}_{guidance_scale}.jpg"
