@@ -221,7 +221,9 @@ def main():
     args = parser.parse_args()
     
     # which_folders = os.listdir("GENERATED_SAMPLES")
-    which_folders = ["12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments_Ages",
+    which_folders = ["12-2024_SD21_LoRA4_alphaW0.1_HeadShot_Photo_Gender_Background",
+                     "12-2024_SD21_LoRA4_alphaW0.1_HeadShot_Photo_Gender_Age_Background"
+                    #"12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments_Ages",
                     ]#"12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments_Ages"]
     
     #which_folders = ["FACE_DATASETS/tufts_512_poses_1-7_all_imgs_jpg_per_ID"]
@@ -244,7 +246,7 @@ def main():
         missing_images_dict = dict()
 
         for model_fold in model_folders:
-            if "COMPARISON_" in model_fold: continue 
+            if "COMPARISON" in model_fold: continue 
             print(model_fold)
             missing_images_dict[model_fold] = dict()
             id_folders = os.listdir(os.path.join(args.in_folder, model_fold))

@@ -14,13 +14,14 @@ from diffusers import AutoPipelineForText2Image
 from itertools import product 
 from utils.sorting_utils import natural_keys
 
-backgrounds_list = ["forest", "city street", "beach", "office", "bus", "laboratory", "factory", "construction site", "hospital", "night club"]
+backgrounds_list = ["", "forest", "city street", "beach", "office", "bus", "laboratory", "factory", "construction site", "hospital", "night club"]
 #backgrounds_list = ["in the forest", "in the city", "at the beach", "at the office", "in the bus", "in the laboratory", "at the factory", "at the construction site", "at the hospital", "at the night club"]
-backgrounds_list = [f"busy {b}"  if b != "" else "" for b in backgrounds_list]#
-backgrounds_list = [""] + backgrounds_list * 2
+backgrounds_list = [f"busy {b} background"  if b != "" else "" for b in backgrounds_list]#
+# backgrounds_list = [""] + backgrounds_list * 2
 
 # expression_list = ["neutral", "happy", "sad", "angry", "shocked"]# "crying", "ashamed"]
 # expression_list = [f"{e} expression"  if e != "" else "" for e in expression_list]# "sad", "frowning", "surprised", "angry"]
+# expression_list = ["", "happy", "sad", "angry", "shocked"]
 
 # face_alterations = ["", "curly hair", "long hair", "short hair", "face tattoos", "sunglasses"]
 # face_alterations = [f"with {alter}" if alter != "" else alter for alter in face_alterations]
@@ -30,13 +31,27 @@ backgrounds_list = [""] + backgrounds_list * 2
 
 # ages = ["20", "30", "40", "50", "60"]
 # ages = [f"{a} years old" for a in ages]
+age_phases = ["", "young", "middle-aged", "old"]
 
 
 num_samples_per_prompt = 1
 num_prompts = 21 #21 #50 #21 #len(additions_list)
 add_gender = True
-only_base_prompt = False
+
 add_pose = False
+add_age = False # should be first in combination
+add_background = True 
+
+# all_prompt_combinations = list(product(backgrounds_list, expression_list))
+# all_prompt_combinations = list(backgrounds_list) #list(product(ages, expression_list))#, backgrounds_list))
+if add_age and add_background: 
+    all_prompt_combinations = list(product(age_phases, backgrounds_list))
+elif add_background: 
+    all_prompt_combinations = list([""] + backgrounds_list[1:] * 2)
+elif add_age: 
+    all_prompt_combinations = list(age_phases * 6)
+
+print(all_prompt_combinations)
 
 device = "cuda:0"
 seed = 0 
@@ -48,6 +63,10 @@ folder_of_models = f"OUTPUT_MODELS/{which_model_folder}" #0.1
 checkpoint =  "checkpoint-31-6400"  # "checkpoint-19-4000" #9-2000 #"checkpoint-12-2600"# "checkpoint-12-2600" 
 models_to_test = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_TimestepWeight"]
 folder_output = f"GENERATED_SAMPLES/{which_model_folder}_HeadShot_Photo"
+if add_gender: folder_output += "_Gender"
+if add_pose: folder_output+= "_Pose"
+if add_age: folder_output+= "_Age"
+if add_background: folder_output += "_Background"
 
 architectures = ["stabilityai/stable-diffusion-2-1-base"]
 model_architecture = architectures[0]
@@ -76,10 +95,6 @@ original_prompt = f"headshot photo of sks person"
 # generate seeds for each prompt number 
 num_seeds = len(ids) 
 
-# all_prompt_combinations = list(product(backgrounds_list, expression_list))
-
-all_prompt_combinations = list(backgrounds_list) #list(product(ages, expression_list))#, backgrounds_list))
-
 prompt = ""
 
 for id_number, which_id in enumerate(ids):
@@ -90,12 +105,9 @@ for id_number, which_id in enumerate(ids):
         if gender == "M": gender = "male"
         elif gender == "F": gender = "female"
     
-
-    # all_prompts_for_id = [[random.choice(additions_list[0]), random.choice(additions_list[1])] for i in range(num_prompts)]
+    
     all_prompts_for_id = random.sample(all_prompt_combinations, num_prompts)
-    #print(all_prompts_for_id)
-    #exit()
-
+    
     comparison_image_list = [] 
     for model_name in models_to_test:
 
@@ -121,17 +133,22 @@ for id_number, which_id in enumerate(ids):
         os.makedirs(output_dir, exist_ok=True)
         generator = torch.Generator(device=device).manual_seed(id_number) 
 
-        for i, num_prompt in enumerate(tqdm(range(num_prompts))):     
-            
-            #prompt_additions = [additions_list[i]]
-            #prompt_additions = [random.choice(additions_list[0]), random.choice(additions_list[1])]
+        for i, num_prompt in enumerate(tqdm(range(num_prompts))): 
             prompt_additions = all_prompts_for_id[i]
             prompt = original_prompt
-            
+            if add_age:
+                age_insert = ""
+                if isinstance(prompt_additions, str): age_insert = prompt_additions
+                else: 
+                    age_insert = prompt_additions[0] 
+                    prompt_additions = prompt_additions[1:]
+                if age_insert != "": prompt = prompt.replace(" sks person", f" {age_insert} sks person")
+                
+
             if add_gender: prompt = prompt.replace(" sks person", f" {gender} sks person")
-            if add_pose and random.choice([True, False]):
-                prompt = prompt.replace("portrait", "side-portrait")
-            if len(prompt_additions) != 0 and not only_base_prompt:
+            if add_pose and random.choice([True, False]): prompt = prompt.replace("headshot", "side-portrait")
+
+            if add_background:
                 if isinstance(prompt_additions, str): 
                     prompt += f", {prompt_additions}"  
                 else:
@@ -139,11 +156,8 @@ for id_number, which_id in enumerate(ids):
                         if addition != "":
                             prompt += f", {addition}"
 
-            # prompt += "old"
-            #print(prompt)
             # generate samples
-            for j in range(num_samples_per_prompt):
-                
+            for j in range(num_samples_per_prompt):  
                 output = pipe(prompt=prompt, negative_prompt=negative_prompt,  output_type="np", generator=generator, num_inference_steps=num_inference_steps, guidance_scale=guidance_scale, width=width, height=height)
                 output = torch.Tensor(output.images)
                 comparison_image_list.append(output)
@@ -158,9 +172,7 @@ for id_number, which_id in enumerate(ids):
     #exit()
     print("Saving comparison image") 
     comparison_folder = "COMPARISON"
-    if only_base_prompt: comparison_folder += "_base"
-    else: comparison_folder = comparison_folder + "_combo"
-    if add_gender: comparison_folder += "_gender"
+
     comparison_folder = os.path.join(folder_output, comparison_folder)
     os.makedirs(comparison_folder, exist_ok=True)
     save_path = f"{comparison_folder}/{which_id}_{checkpoint}_{arch}_{guidance_scale}.jpg"
