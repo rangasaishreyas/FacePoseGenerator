@@ -84,11 +84,11 @@ def main(args):
 
         # rec = os.path.join(cfg.dataset_folder, cfg.model, cfg.embedding_type)  # training dataset
         # model_dir = os.path.join(cfg.root_folder, "Face_recognition_training", f"{cfg.output_folder_name_start}_{cfg.loss}_{cfg.dataset_folder.split('/')[-2]}_AUG{cfg.augment}/{cfg.dataset_folder.split('/')[-1]}", cfg.architecture, cfg.model) #cfg.embedding_type + f"_w{cfg.width}_d{cfg.depth}")
-        model_dir = os.path.join(cfg.root_folder, "Face_recognition_training", f"{cfg.output_folder_name_start}/{cfg.architecture}_AUG{cfg.augment}/{args.run_index}_{cfg.dataset_folder.split('/')[-1]}", cfg.model) 
+        model_dir = os.path.join(cfg.root_folder, "FR_training", f"{cfg.output_folder_name_start}/{cfg.architecture}_AUG{cfg.augment}/{args.run_index}_{cfg.dataset_folder.split('/')[-1]}", cfg.model) 
         
         # root_model_folder = f"EXPERIMENTS_RECOGNITION_{cfg.model.split('/')[2].split('_')[3]}"
         #model_dir = os.path.join(root_model_folder, cfg.architecture, os.path.join(cfg.model.split("/")[-2], cfg.model.split("/")[-1]))
-        results_dir = os.path.join(cfg.root_folder, "Face_recognition_training", f"REC_RESULTS_TFD+Synth/{cfg.architecture}_AUG{cfg.augment}/{args.run_index}_{cfg.dataset_folder.split('/')[-1]}") #cfg.embedding_type + f"_w{cfg.width}_d{cfg.depth}")
+        results_dir = os.path.join(cfg.root_folder, "FR_training", f"REC_RESULTS_TFD+Synth/{cfg.architecture}_AUG{cfg.augment}/{args.run_index}_{cfg.dataset_folder.split('/')[-1]}") #cfg.embedding_type + f"_w{cfg.width}_d{cfg.depth}")
         os.makedirs(results_dir, exist_ok=True)
         
         file_name_to_save_to = f"{cfg.model}.json"

@@ -88,7 +88,7 @@ def main(args):
         cfg.val_path = cfg.benchmark_folder 
 
         rec = os.path.join(cfg.dataset_folder, cfg.model, cfg.embedding_type)  # training dataset
-        output_dir = os.path.join(cfg.root_folder, "Face_recognition_training", f"{cfg.output_folder_name_start}/{cfg.architecture}_AUG{cfg.augment}/{args.run_index}_{cfg.dataset_folder.split('/')[-1]}", cfg.model) #cfg.embedding_type + f"_w{cfg.width}_d{cfg.depth}")
+        output_dir = os.path.join(cfg.root_folder, "FR_training", f"{cfg.output_folder_name_start}/{cfg.architecture}_AUG{cfg.augment}/{args.run_index}_{cfg.dataset_folder.split('/')[-1]}", cfg.model) #cfg.embedding_type + f"_w{cfg.width}_d{cfg.depth}")
         os.makedirs(output_dir, exist_ok=True)
         
         logger = get_logger("__Train__")
@@ -116,7 +116,7 @@ def main(args):
 
         # copy config to output folder
         shutil.copyfile(
-            r"./Face_recognition_training/config/FR_config.py", os.path.join(output_dir, "config.py")
+            r"config/FR_config.py", os.path.join(output_dir, "config.py")
         )
 
         ###############################################
@@ -242,7 +242,7 @@ def main(args):
         )
 
         
-        callback_verification = CallBackVerification(1, accelerator.process_index, cfg.val_targets, cfg.val_path, img_size=[112, 112], logger=logger)
+        callback_verification = CallBackVerification(cfg.verification_frequency, accelerator.process_index, cfg.val_targets, cfg.val_path, img_size=[112, 112], logger=logger)
 
         callback_checkpoint = CallBackModelCheckpointOld(accelerator.process_index, output_dir)
 
@@ -324,11 +324,11 @@ def main(args):
                 model.eval()
                 header.eval()
 
-                if len(cfg.val_targets) != 0:
+                if len(cfg.val_targets) != 0 and epoch != 0 and epoch % cfg.verification_frequency == 0:
                     #list_of_accs = []
                     #logger.info(f"Verification benchmarks: {cfg.val_targets}")
 
-                    ver_accs = callback_verification(global_step, model)
+                    ver_accs = callback_verification(epoch, model)
                     avg_acc[0] = sum(ver_accs) / len(ver_accs)
                     # ver_accs = [round(ver_acc, 4) for ver_acc in ver_accs ]
                     logger.info(f"Avg. acc: {avg_acc[0]:.4f}, Ver. accs: {ver_accs}")

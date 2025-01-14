@@ -1,6 +1,7 @@
 architecture = "resnet50"#"resnet50"#"resnet50"
 
-root_folder = "/shared/home/darian.tomasevic/ID-Booth/"
+# root_folder = "/shared/home/darian.tomasevic/ID-Booth/"
+root_folder = "/home/darian/Desktop/Diffusion/ID-Booth/"
 #dataset_folder = "../Generated_Split_Images_112x112/"
 
 # dataset_folder = f"{root_folder}/FR_DATASETS/FR_DATASETS_SDXL/SDXL_DB_LoRA_Tufts_base_prompt_16_07_png"
@@ -21,8 +22,10 @@ root_folder = "/shared/home/darian.tomasevic/ID-Booth/"
 
 #dataset_folder = f"{root_folder}/FR_DATASETS/FR_DATASETS_AUGMENTED_+10_samples/SDXL_DB_LoRA_Tufts_combined_16_07_png"
 # dataset_folder = f"{root_folder}/FR_DATASETS/FR_DATASETS_AUGMENTED_+10_samples/SDXL_DB_LoRA_Tufts_base_prompt_16_07_png"
+folder_to_test = "12-2024_SD21_LoRA4_alphaW0.1_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB"
+# folder_to_test = "12-2024_SD21_LoRA4_alphaW0.1_FINAL_FacePortraitPhoto_Gender_Pose_AgePhases_Expression_BackgroundB"
 
-dataset_folder = f"{root_folder}/FR_DATASETS/12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments"
+dataset_folder = f"{root_folder}/FR_DATASETS/{folder_to_test}"
 
 # # TODO 
 #dataset_folder = f"{root_folder}/FR_DATASETS/FR_DATASETS_SDXL/tufts_512_poses_1-7_all_imgs_jpg_per_ID"
@@ -32,13 +35,13 @@ models = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_Tim
 
 
 model = "TODO"
-benchmark_folder = f"{root_folder}/Face_recognition_training/VALIDATION_DATASETS_from_webface"
-augment = True 
+benchmark_folder = f"{root_folder}/FR_training/VALIDATION_DATASETS_from_webface"
+augment = False 
 stopping_condition_epochs = 6 #6 #6 # 10 # TODO was 6 
 stop_only_after_epoch_schedule = False 
 
 
-output_folder_name_start = "REC_EXP_12_2024_EndGame_LFW_MultiRun"#_AllBench"
+output_folder_name_start = "REC_EXP_01_2025_LFW_MultiRun_Verification1_CosFace"#_AllBench"
 
 EMBEDDING_TYPE = [
     "."
@@ -61,11 +64,12 @@ start_epoch = 0
 
 s = 64.0
 m = 0.35
-loss = "AdaFace"#""
+loss = "CosFace"#""
 dropout_ratio = 0.4
 
 augmentation = "ra_4_16"  # hf, ra_4_16
 
+verification_frequency = 1
 print_freq = 1 #50
 val_path = "TODO"#"/data/Biometrics/database/faces_emore"  # "/data/fboutros/faces_emore"
 val_targets = ["lfw"]
