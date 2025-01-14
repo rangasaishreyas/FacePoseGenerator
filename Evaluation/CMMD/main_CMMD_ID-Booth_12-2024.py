@@ -77,7 +77,7 @@ def main(argv):
     
     max_number_of_samples = 2500
     sample_it = True 
-    seed = 42 
+    seed = 7
     print("Sample it:", sample_it)
     print("MAX", _MAX_COUNT.value)
     score = float(compute_cmmd(dir1, dir2, feature_save_folder,  max_number_of_samples, sample_it, seed, _REF_EMBED_FILE.value, _BATCH_SIZE.value, _MAX_COUNT.value))
@@ -86,7 +86,7 @@ def main(argv):
         f" {score:.3f}"
     )
     
-    output_folder = f"CMMD_FR_Results_12-2024_Seed{seed}_2500/{dir1.split('/')[-2]}_vs_{dir2.split('/')[-2]}"
+    output_folder = f"CMMD_FR_Results_12-2024_Seed{seed}_Sampled-{sample_it}_{max_number_of_samples}/{dir1.split('/')[-2]}_vs_{dir2.split('/')[-2]}"
     os.makedirs(output_folder, exist_ok=True)
     
     output_filename = f"{dir2.split('/')[-1]}.json"
