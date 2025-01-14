@@ -17,23 +17,24 @@ import sys
 import inspect
 #from multiprocessing import Process, Queue
 import pandas as pd
-from create_genuine_and_impostor_files import run_create_gen_imp_files
+from genuine_and_impostor_AmongSynth import run_create_gen_imp_files_AmongSynth
+from genuine_and_imposter_SynthVsReal import run_create_gen_imp_files_SynthVsReal
 
-
-#dataset_folder = "../GENERATED_SAMPLES_Turbo/27-10_SD21_LoRA32_LR0.0001_GS0.0_Steps4"
-#dataset_folder = "../Generated_Split_Images_112x112"
-main_folder = "/shared/home/darian.tomasevic/ID-Booth/FR_DATASETS/"
-# dataset_folders = ["12-2024_SD21_LoRA4_alphaWNone_Expr_Env", "12-2024_SD21_LoRA4_alphaWNone_Age_Expr", "12-2024_SD21_LoRA4_alphaWNone_Age", 
-#                   "12-2024_SD21_LoRA4_alphaW0.1_Expr_Env", "12-2024_SD21_LoRA4_alphaW0.1_Age_Expr", "12-2024_SD21_LoRA4_alphaW0.1_Age"]
-
-# dataset_folders = ["12-2024_SD21_LoRA4_alphaW0.1_Face",
-#                    "12-2024_SD21_LoRA4_alphaW0.1_Face_Environments",
-#                    "12-2024_SD21_LoRA4_alphaW0.1_Face_Environments_Ages",
-#                    "12-2024_SD21_LoRA4_alphaW0.1_Face_Poses",
-#                    "12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments"]
-dataset_folders = ["12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments_Ages"]
+# Cluster setup 
+# main_folder = "/shared/home/darian.tomasevic/ID-Booth/FR_DATASETS/"
+main_folder = "../../FR_DATASETS/"
+# dataset_folders = ["12-2024_SD21_LoRA4_alphaW0.1_Face", "12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments"]
+dataset_folders = [#"12-2024_SD21_LoRA4_alphaW0.1_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB",
+                   #"12-2024_SD21_LoRA4_alphaW0.1_FINAL_FacePortraitPhoto_Gender_Pose_AgePhases_Expression_BackgroundB"
+                   "12-2024_SD21_LoRA4_alphaWNone_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB"
+                   ]#, "12-2024_SD21_LoRA4_alphaW0.1_HeadShot_Photo_Gender_Age_Background"]
 
 subfolders = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_TimestepWeight"]
+
+# dataset_folders = ["tufts_512_poses_1-7_all_imgs_jpg_per_ID"]
+# subfolders = ["images"]
+
+real_folder = f"{main_folder}tufts_512_poses_1-7_all_imgs_jpg_per_ID/images"
 
 
 # create pyeer report
@@ -89,71 +90,79 @@ def plot_score_histogram(ax, df, stats, which_stat):
     ax.set_ylabel("Probability", size=14)
 
     #plt.legend(loc="upper left")
-    ax.set_ylim(0, 0.045)
-    ax.set_xlim(-0.25, 0.95)
+    #ax.set_ylim(0, 0.075)
 ############################
 
 
-for dataset_folder in dataset_folders:
-    dataset_folder = os.path.join(main_folder, dataset_folder)
+for which_config in ["vsSynth", "vsReal"]: # ""
+    for dataset_folder in dataset_folders:
+        dataset_folder = os.path.join(main_folder, dataset_folder)
 
-    output_folder = os.path.join("RESULTS", os.path.basename(dataset_folder))
+        output_folder = os.path.join(f"RESULTS/{which_config}", os.path.basename(dataset_folder))
 
-    for subfolder in subfolders:
-        data_folder = os.path.join(dataset_folder, subfolder)
-        which_FR_model = "backbones/ArcFace_r100_ms1mv3_backbone.pth"
+        for subfolder in subfolders:
+            data_folder = os.path.join(dataset_folder, subfolder)
+            which_FR_model = "backbones/ArcFace_r100_ms1mv3_backbone.pth"
 
-        run_create_gen_imp_files(datadir=data_folder, fr_path=which_FR_model, outdir=output_folder)
+            if which_config == "vsSynth":
+                run_create_gen_imp_files_AmongSynth(datadir=data_folder, fr_path=which_FR_model, outdir=output_folder)
+            elif which_config  == "vsReal":
+                run_create_gen_imp_files_SynthVsReal(datadir=data_folder, realdir=real_folder, fr_path=which_FR_model, outdir=output_folder)
 
-        print(subfolder)
-        folder = os.path.join(output_folder,  subfolder.replace("/","__"))
-        print("Folder", folder)
-        gscore_file = os.path.join(folder, "genuines.txt")
-        iscore_file = os.path.join(folder, "impostors.txt")
+            print(subfolder)
+            folder = os.path.join(output_folder,  subfolder.replace("/","__"))
+            print("Folder", folder)
+            gscore_file = os.path.join(folder, "genuines.txt")
+            iscore_file = os.path.join(folder, "impostors.txt")
 
-        genuine_scores = pd.read_csv(gscore_file, header=None)[0].to_list()
-        impostor_scores = pd.read_csv(iscore_file, header=None)[0].to_list()
+            genuine_scores = pd.read_csv(gscore_file, header=None)[0].to_list()
+            impostor_scores = pd.read_csv(iscore_file, header=None)[0].to_list()
 
-        # Calculating stats
-        stats = get_eer_stats(genuine_scores, impostor_scores)
-        stats = stats._asdict()
-        print(stats.keys())
+            # Calculating stats
+            stats = get_eer_stats(genuine_scores, impostor_scores)
+            stats = stats._asdict()
+            print(stats.keys())
 
-        stats["fdr"] = compute_fdr(stats)
-        
-        saving_dict = dict()
-        for metric in report_which_metrics:
-            print(f"{metric}: {stats[metric]}")
-            saving_dict[metric] = stats[metric]
+            stats["fdr"] = compute_fdr(stats)
+            
+            saving_dict = dict()
+            for metric in report_which_metrics:
+                print(f"{metric}: {stats[metric]}")
+                saving_dict[metric] = stats[metric]
 
 
-        #with open(os.path.join(folder, "PyEER_report_" + subfolder.replace("/", "__"))+".json", "w") as outfile:
-        with open(os.path.join(folder, "PyEER_report.json"), "w") as outfile:
-            json.dump(saving_dict, outfile, indent=4)
-            print("==" * 30)
+            #with open(os.path.join(folder, "PyEER_report_" + subfolder.replace("/", "__"))+".json", "w") as outfile:
+            with open(os.path.join(folder, "PyEER_report.json"), "w") as outfile:
+                json.dump(saving_dict, outfile, indent=4)
+                print("==" * 30)
 
-        currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-        parentdir = os.path.dirname(currentdir)
-        sys.path.insert(0, parentdir)
+            currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+            parentdir = os.path.dirname(currentdir)
+            sys.path.insert(0, parentdir)
 
-        datadir =  os.path.join(output_folder, subfolder.replace("/", "__"))#"Synth_100_subset_preprocess_both_classes"
-        print(datadir)
-        save_dir = os.path.join(datadir)
+            datadir =  os.path.join(output_folder, subfolder.replace("/", "__"))#"Synth_100_subset_preprocess_both_classes"
+            print(datadir)
+            save_dir = os.path.join(datadir)
 
-        gen_sims = list(np.loadtxt(os.path.join(datadir, "genuines.txt")))
-        impo_sims = list(np.loadtxt(os.path.join(datadir, "impostors.txt")))
+            gen_sims = list(np.loadtxt(os.path.join(datadir, "genuines.txt")))
+            impo_sims = list(np.loadtxt(os.path.join(datadir, "impostors.txt")))
 
-        # Plot 
-        df = pd.DataFrame()
-        df['scores'] = gen_sims + impo_sims
-        df['label'] = ['Genuine'] * len(gen_sims) + ['Imposter'] * len(impo_sims)
+            # Plot 
+            df = pd.DataFrame()
+            df['scores'] = gen_sims + impo_sims
+            df['label'] = ['Genuine'] * len(gen_sims) + ['Imposter'] * len(impo_sims)        
+            # save df before plotting 
+            df.to_csv(os.path.join(datadir, "final_df.csv"))
 
-        fig = plt.figure()#figsize=(8, 8))
-        plot_score_histogram(plt.gca(), df, stats, which_stat="probability")
-        plt.tight_layout()
-        savename = os.path.join(save_dir, "distribution_" + subfolder.replace("/", "__") + ".png")
-        print("Saving to:", savename)
-        plt.savefig(savename, dpi=256)
-        plt.close(fig)
+            print("///" * 30 )
 
-        print("====" * 30)
+
+            fig = plt.figure()#figsize=(8, 8))
+            plot_score_histogram(plt.gca(), df, stats, which_stat="probability")
+            plt.tight_layout()
+            savename = os.path.join(save_dir, "distribution_" + subfolder.replace("/", "__") + ".png")
+            print("Saving to:", savename)
+            plt.savefig(savename, dpi=256)
+            plt.close(fig)
+
+            print("====" * 30)

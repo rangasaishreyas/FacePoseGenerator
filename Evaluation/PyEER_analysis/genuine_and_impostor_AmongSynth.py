@@ -1,6 +1,5 @@
 import os
 import argparse
-from IPython import embed
 import numpy as np
 from matplotlib import rcParams
 import sys
@@ -46,35 +45,12 @@ def split_gen_imp(embeddings, num_ids, args, min_samples=3):
     # TODO 
     print("Shuffle embeddings:")
     random.shuffle(embeddings) 
-    # print(embeddings)
+    
     #num_ids = len(embeddings)
     print("Create genuine and impostor pairs... num_ids:", num_ids)
     
     min_samples = 8 #2 # 9
-    samples_skip = 19 #16
-    # if "COMBINED" in args.datadir: 
-    #     min_samples = 12 #6
-    #     samples_skip = 1 #10 
-
-    # elif num_ids == 1000: 
-    #     min_samples = 4
-    #     samples_skip = 16 #8 
-    
-    # elif num_ids == 500: 
-    #     min_samples = 5
-    #     samples_skip = 12 
-
-    # if "ID_SPLIT" in args.datadir:
-    #     min_samples = 6
-    #     samples_skip = 9 
-
-    # elif num_ids == 95: 
-    #     min_samples = 9
-    #     samples_skip = 8 
-
-    # elif num_ids == 53:
-    #     min_samples = 9
-    #     samples_skip = 4
+    samples_skip = 18 #16
 
     for p in tqdm(range(num_ids)):
         
@@ -297,12 +273,12 @@ class Namespace:
         self.__dict__.update(kwargs)
 
 #################################################
-def run_create_gen_imp_files(datadir, fr_path, outdir):
+def run_create_gen_imp_files_AmongSynth(datadir, fr_path, outdir):
 
     num_ids = 0 
     batchsize = 16
     num_imgs = 0
-    seed = 7 # 24 #0 #42  #100 # TODO was 24
+    seed = 7 #0 #42  #100
     set_all_seeds(seed)
 
     args = Namespace(datadir = datadir,
@@ -316,4 +292,6 @@ def run_create_gen_imp_files(datadir, fr_path, outdir):
     generate_embeddings(args)
     create_genuine_and_impostor_files(args)
 #################################################
+
+
 
