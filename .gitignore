@@ -4,7 +4,13 @@
 *.sbatch 
 *.sqfs 
 *.out 
-backup*
+*.json*
+*.pt*
+*.pdf*
+*.zip*
+
+*backup*
+*BACKUP*
 
 *OUTPUT_MODELS*
 *GENERATED_SAMPLES*
@@ -15,17 +21,16 @@ backup*
 *EXPERIMENTS*
 *VALIDATION_DATASETS*
 *CLASS_IMAGES*
-*BACKUP*
+
 *facenet_pytorch*
 *images_during_training*
 *Face_recognition_training*
 *FR_DATASETS*
 *Results*
 *Features*
-*.zip*
+
 *Example*
 *REC_EXP*
 *eDifFIQA*
-*.json*
-*.pt*
-*.pdf*
+
+*cache*
