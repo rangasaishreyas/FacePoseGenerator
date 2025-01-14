@@ -20,9 +20,12 @@ backup*
 *images_during_training*
 *Face_recognition_training*
 *FR_DATASETS*
-*FR_Features*
-*FR_Results*
+*Results*
+*Features*
 *.zip*
-*Evaluation*
 *Example*
 *REC_EXP*
+*eDifFIQA*
+*.json*
+*.pt*
+*.pdf*
