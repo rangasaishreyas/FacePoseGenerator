@@ -22,7 +22,7 @@ root_folder = "/home/darian/Desktop/Diffusion/ID-Booth/"
 
 #dataset_folder = f"{root_folder}/FR_DATASETS/FR_DATASETS_AUGMENTED_+10_samples/SDXL_DB_LoRA_Tufts_combined_16_07_png"
 # dataset_folder = f"{root_folder}/FR_DATASETS/FR_DATASETS_AUGMENTED_+10_samples/SDXL_DB_LoRA_Tufts_base_prompt_16_07_png"
-folder_to_test = "12-2024_SD21_LoRA4_alphaW0.1_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB"
+folder_to_test = "12-2024_SD21_LoRA4_alphaWNone_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB"
 # folder_to_test = "12-2024_SD21_LoRA4_alphaW0.1_FINAL_FacePortraitPhoto_Gender_Pose_AgePhases_Expression_BackgroundB"
 
 dataset_folder = f"{root_folder}/FR_DATASETS/{folder_to_test}"
@@ -40,8 +40,8 @@ augment = False
 stopping_condition_epochs = 6 #6 #6 # 10 # TODO was 6 
 stop_only_after_epoch_schedule = False 
 
-
-output_folder_name_start = "REC_EXP_01_2025_LFW_MultiRun_Verification1_CosFace"#_AllBench"
+verification_frequency = 1
+output_folder_name_start = f"REC_EXP_01_2025_LFW_Verification{verification_frequency}"#_AllBench"
 
 EMBEDDING_TYPE = [
     "."
@@ -64,12 +64,12 @@ start_epoch = 0
 
 s = 64.0
 m = 0.35
-loss = "CosFace"#""
+loss = "AdaFace"#""
 dropout_ratio = 0.4
 
 augmentation = "ra_4_16"  # hf, ra_4_16
 
-verification_frequency = 1
+
 print_freq = 1 #50
 val_path = "TODO"#"/data/Biometrics/database/faces_emore"  # "/data/fboutros/faces_emore"
 val_targets = ["lfw"]
