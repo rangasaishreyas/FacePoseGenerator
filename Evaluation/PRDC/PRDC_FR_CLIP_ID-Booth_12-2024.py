@@ -258,7 +258,10 @@ def calculate_scores(paths, batch_size, device, dims, feature_save_folder, save_
     """Calculates Precision, Recall, Coverage and Density of two paths with the Imagenet model"""
     for p in paths:
         if not os.path.exists(p):
-            raise RuntimeError('Invalid path: %s' % p)
+            print('Invalid path: %s' % p)
+            print("Check if features exist")
+
+            #raise RuntimeError('Invalid path: %s' % p)
     
     # imagenet_model = torchvision.models.vgg16(weights='IMAGENET1K_V1', progress=True).to(device)#, #weights="IMAGENET1K_FEATURES", progress=True).to(device)
     
@@ -304,12 +307,12 @@ def main():
         num_workers = args.num_workers
 
     save_features = True 
-    seed = 42
-    max_number_of_samples = 5000 #2500
+    seed = 7
+    max_number_of_samples = 2500 #2500
     print("seed:", seed)
     set_all_seeds(seed)
 
-    feature_save_folder = f"../../ID-Booth/Evaluation/CMMD/CMMD_FR_Features_12-2024"# PRDC_ID-Booth_FR_Features/12-2024_CLIP_seed{seed}"
+    feature_save_folder = f"../CMMD/CMMD_FR_Features_12-2024"# PRDC_ID-Booth_FR_Features/12-2024_CLIP_seed{seed}"
     prdc_values = calculate_scores(args.path, args.batch_size, device, args.dims, feature_save_folder, save_features, seed, max_number_of_samples, num_workers)
     
     result = {"PRDC": prdc_values}

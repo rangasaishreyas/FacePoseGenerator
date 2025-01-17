@@ -192,11 +192,14 @@ def extract_features(path, model, batch_size, dims, device, presaved_feat_path, 
     
     sample_it = True
     
-    
-
     presaved_feat_path_2 = f"{os.path.dirname(presaved_feat_path)}.npy" 
     
+    # print("Find precomputed features in either:")
+    # print(presaved_feat_path, " or ")
+    # print(presaved_feat_path_2)
+    
     if  os.path.exists(presaved_feat_path):
+        
         feats = load_precomputed_features(presaved_feat_path, sample_it, max_number_of_samples)
         if sample_it: feats = sample_features(feats, max_number_of_samples, seed)
         return feats
@@ -258,7 +261,9 @@ def calculate_scores(paths, batch_size, device, dims, feature_save_folder, save_
     """Calculates Precision, Recall, Coverage and Density of two paths with the Imagenet model"""
     for p in paths:
         if not os.path.exists(p):
-            raise RuntimeError('Invalid path: %s' % p)
+            print('Invalid path: %s' % p)
+            print("Check if features exist")
+            #raise RuntimeError('Invalid path: %s' % p)
     
     # imagenet_model = torchvision.models.vgg16(weights='IMAGENET1K_V1', progress=True).to(device)#, #weights="IMAGENET1K_FEATURES", progress=True).to(device)
     
@@ -274,11 +279,13 @@ def calculate_scores(paths, batch_size, device, dims, feature_save_folder, save_
     #imagenet_model_extractor = imagenet_model 
     #imagenet_model_extractor.eval()
     
-    presaved_real_feat_path = f"{os.path.join(feature_save_folder, paths[0].split('/')[-2])}.npy"
-    print(presaved_real_feat_path)
+    presaved_real_feat_path = os.path.join(feature_save_folder, paths[0].split('/')[-2], 'images.npy')
+    print("Presaved real path:", presaved_real_feat_path)
     feats_real = extract_features(paths[0], embedding_model, batch_size, dims, device, presaved_real_feat_path, save_features, seed, max_number_of_samples, num_workers=1)
     
+    
     presaved_synth_feat_path = f"{os.path.join(feature_save_folder, paths[1].split('/')[-2], paths[1].split('/')[-1])}.npy"
+    print("Presaved synth path:", presaved_synth_feat_path)
     feats_synth = extract_features(paths[1], embedding_model, batch_size, dims, device, presaved_synth_feat_path, save_features, seed, max_number_of_samples, num_workers=1)
 
     nearest_k = 5
@@ -304,12 +311,12 @@ def main():
         num_workers = args.num_workers
 
     save_features = True 
-    seed = 42
-    max_number_of_samples = 5000 #2500
+    seed = 7
+    max_number_of_samples = 2500 #2500
     print("seed:", seed)
     set_all_seeds(seed)
 
-    feature_save_folder = f"../../ID-Booth/Evaluation/CMMD/CMMD_NonFR_Features_12-2024"# PRDC_ID-Booth_FR_Features/12-2024_CLIP_seed{seed}"
+    feature_save_folder = f"../CMMD/CMMD_NonFR_Features_12-2024"# PRDC_ID-Booth_FR_Features/12-2024_CLIP_seed{seed}"
     prdc_values = calculate_scores(args.path, args.batch_size, device, args.dims, feature_save_folder, save_features, seed, max_number_of_samples, num_workers)
     
     result = {"PRDC": prdc_values}
