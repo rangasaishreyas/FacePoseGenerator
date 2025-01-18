@@ -14,9 +14,10 @@ from diffusers import AutoPipelineForText2Image
 from itertools import product 
 from utils.sorting_utils import natural_keys
 
-backgrounds_list = ["", "forest", "city street", "beach", "office", "bus", "laboratory", "factory", "construction site", "hospital", "night club"]
+backgrounds_list = ["","forest", "city street", "beach", "office", "bus", "laboratory", "factory", "construction site", "hospital", "night club"]
+
 #backgrounds_list = ["in the forest", "in the city", "at the beach", "at the office", "in the bus", "in the laboratory", "at the factory", "at the construction site", "at the hospital", "at the night club"]
-backgrounds_list = [f"busy {b} background"  if b != "" else "" for b in backgrounds_list]#
+backgrounds_list = [f"{b} background"  if b != "" else "" for b in backgrounds_list]#
 # backgrounds_list = [""] + backgrounds_list * 2
 
 # expression_list = ["neutral", "happy", "sad", "angry", "shocked"]# "crying", "ashamed"]
@@ -35,10 +36,10 @@ age_phases = ["", "young", "middle-aged", "old"]
 
 
 num_samples_per_prompt = 1
-num_prompts = 21 #21 #50 #21 #len(additions_list)
+num_prompts = 100 # 21 #21 #50 #21 #len(additions_list)
 add_gender = True
 
-add_pose = False
+add_pose = True
 add_age = False # should be first in combination
 add_background = True 
 
@@ -47,7 +48,11 @@ add_background = True
 if add_age and add_background: 
     all_prompt_combinations = list(product(age_phases, backgrounds_list))
 elif add_background: 
-    all_prompt_combinations = list([""] + backgrounds_list[1:] * 2)
+    if num_prompts == 100:
+        all_prompt_combinations = list(backgrounds_list[1:] * 10)
+    else:
+        all_prompt_combinations = list([""] + backgrounds_list[1:] * 2)
+    
 elif add_age: 
     all_prompt_combinations = list(age_phases * 6)
 
@@ -58,11 +63,11 @@ seed = 0
 guidance_scale = 5.0
 num_inference_steps = 30 #30
 
-which_model_folder = "12-2024_SD21_LoRA4_alphaW0.1"  #0.1 # None
+which_model_folder = "12-2024_SD21_LoRA4_alphaWNone"  #0.1 # None
 folder_of_models = f"OUTPUT_MODELS/{which_model_folder}" #0.1
 checkpoint =  "checkpoint-31-6400"  # "checkpoint-19-4000" #9-2000 #"checkpoint-12-2600"# "checkpoint-12-2600" 
 models_to_test = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_TimestepWeight"]
-folder_output = f"GENERATED_SAMPLES/{which_model_folder}_HeadShot_Photo"
+folder_output = f"GENERATED_SAMPLES_100/{which_model_folder}_FacePortrait_Photo"
 if add_gender: folder_output += "_Gender"
 if add_pose: folder_output+= "_Pose"
 if add_age: folder_output+= "_Age"
@@ -90,7 +95,7 @@ if add_gender:
 
 negative_prompt = "cartoon, cgi, render, illustration, painting, drawing, black and white, bad body proportions, landscape" # "cartoon, cgi, render, illustration, painting, drawing, black and white, bad body proportions" #"blurry, fake skin, plastic skin, cartoon, grayscale, painting, monochrome"
 # original_prompt =  "photo of sks person"#, aligned close-up portrait""#,  50 years old, sunglasses, forest"#, face tattoos"#, 10 years old"
-original_prompt = f"headshot photo of sks person"
+original_prompt = f"face portrait photo of sks person"
 
 # generate seeds for each prompt number 
 num_seeds = len(ids) 
@@ -146,7 +151,7 @@ for id_number, which_id in enumerate(ids):
                 
 
             if add_gender: prompt = prompt.replace(" sks person", f" {gender} sks person")
-            if add_pose and random.choice([True, False]): prompt = prompt.replace("headshot", "side-portrait")
+            if add_pose and random.choice([True, False]): prompt = prompt.replace("portrait", "side-portrait")
 
             if add_background:
                 if isinstance(prompt_additions, str): 
