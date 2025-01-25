@@ -14,13 +14,14 @@ from diffusers import AutoPipelineForText2Image
 from itertools import product 
 from utils.sorting_utils import natural_keys
 
-backgrounds_list = ["", "forest", "city street", "beach", "office", "bus", "laboratory", "factory", "construction site", "hospital", "night club"]
+backgrounds_list = ["","forest", "city street", "beach", "office", "bus", "laboratory", "factory", "construction site", "hospital", "night club"]
+
 #backgrounds_list = ["in the forest", "in the city", "at the beach", "at the office", "in the bus", "in the laboratory", "at the factory", "at the construction site", "at the hospital", "at the night club"]
 backgrounds_list = [f"{b} background"  if b != "" else "" for b in backgrounds_list]#
 # backgrounds_list = [""] + backgrounds_list * 2
 
-expression_list = ["neutral", "happy", "sad", "angry", "shocked"]# "crying", "ashamed"]
-expression_list = [f"{e} expression"  if e != "" else "" for e in expression_list]# "sad", "frowning", "surprised", "angry"]
+# expression_list = ["neutral", "happy", "sad", "angry", "shocked"]# "crying", "ashamed"]
+# expression_list = [f"{e} expression"  if e != "" else "" for e in expression_list]# "sad", "frowning", "surprised", "angry"]
 # expression_list = ["", "happy", "sad", "angry", "shocked"]
 
 # face_alterations = ["", "curly hair", "long hair", "short hair", "face tattoos", "sunglasses"]
@@ -32,16 +33,17 @@ expression_list = [f"{e} expression"  if e != "" else "" for e in expression_lis
 # ages = ["20", "30", "40", "50", "60"]
 # ages = [f"{a} years old" for a in ages]
 age_phases = ["", "young", "middle-aged", "old"]
-age_phases = [f"{age} adult" if age != "" else "" for age in age_phases]
+
 
 num_samples_per_prompt = 1
-num_prompts = 100 # 21 #21 #50 #21 #len(additions_list)
+num_prompts = 21 # 21 #21 #50 #21 #len(additions_list)
 add_gender = True
 
 add_pose = True
 add_age = False # should be first in combination
 add_background = True 
-add_expression = False
+use_non_finetuned = True 
+
 
 # all_prompt_combinations = list(product(backgrounds_list, expression_list))
 # all_prompt_combinations = list(backgrounds_list) #list(product(ages, expression_list))#, backgrounds_list))
@@ -53,24 +55,9 @@ elif add_background:
     else:
         all_prompt_combinations = list([""] + backgrounds_list[1:] * 2)
     
-# elif add_age: 
-#     all_prompt_combinations = list(age_phases * 6)
-if add_age and add_background and add_expression: 
-    all_prompt_combinations = list(product(age_phases, expression_list, backgrounds_list))
-elif add_age and add_background:
-    all_prompt_combinations = list(product(age_phases, backgrounds_list))
-elif add_expression and add_background:
-    all_prompt_combinations = list(product(expression_list, backgrounds_list))
-elif add_background: 
-    if num_prompts == 100:
-        all_prompt_combinations = list(backgrounds_list[1:] * 10)
-    else:
-        all_prompt_combinations = list([""] + backgrounds_list[1:] * 2)
 elif add_age: 
     all_prompt_combinations = list(age_phases * 6)
-else: 
-    all_prompt_combinations = list([""] * num_prompts)
-    
+
 print(all_prompt_combinations)
 
 device = "cuda:0"
@@ -81,15 +68,14 @@ num_inference_steps = 30 #30
 which_model_folder = "12-2024_SD21_LoRA4_alphaWNone"  #0.1 # None
 folder_of_models = f"OUTPUT_MODELS/{which_model_folder}" #0.1
 checkpoint =  "checkpoint-31-6400"  # "checkpoint-19-4000" #9-2000 #"checkpoint-12-2600"# "checkpoint-12-2600" 
-models_to_test = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_TimestepWeight"]
-folder_output = f"GENERATED_SAMPLES_WNone_100/{which_model_folder}_FacePortrait_Photo"
+# TODO models_to_test = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_TimestepWeight"]
+models_to_test = ["no_new_Loss"]
+
+folder_output = f"GENERATED_SAMPLES_NonFinetuned/{which_model_folder}_FacePortrait_Photo_21"
 if add_gender: folder_output += "_Gender"
 if add_pose: folder_output+= "_Pose"
-if add_age: folder_output+= "_AgePhases"
-if add_expression: folder_output += "_Expression"
-if add_background: folder_output += "_BackgroundB"
-
-# 12-2024_SD21_LoRA4_alphaW0.1_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB
+if add_age: folder_output+= "_Age"
+if add_background: folder_output += "_Background"
 
 architectures = ["stabilityai/stable-diffusion-2-1-base"]
 model_architecture = architectures[0]
@@ -105,14 +91,13 @@ ids.sort(key=natural_keys)
 # ids = ids[:2]
 
 print(ids)
-#ids = ids[35:]
 if add_gender:
     with open("tufts_gender_dict.json", "r") as fp:
         gender_dict = json.load(fp)
 
 # ids = ids[:1]
 
-negative_prompt = "cartoon, cgi, render, illustration, painting, drawing, black and white, bad body proportions, landscape, close-up" # "cartoon, cgi, render, illustration, painting, drawing, black and white, bad body proportions" #"blurry, fake skin, plastic skin, cartoon, grayscale, painting, monochrome"
+negative_prompt = "cartoon, cgi, render, illustration, painting, drawing, black and white, bad body proportions, landscape" # "cartoon, cgi, render, illustration, painting, drawing, black and white, bad body proportions" #"blurry, fake skin, plastic skin, cartoon, grayscale, painting, monochrome"
 # original_prompt =  "photo of sks person"#, aligned close-up portrait""#,  50 years old, sunglasses, forest"#, face tattoos"#, 10 years old"
 original_prompt = f"face portrait photo of sks person"
 
@@ -129,9 +114,8 @@ for id_number, which_id in enumerate(ids):
         if gender == "M": gender = "male"
         elif gender == "F": gender = "female"
     
-    random.seed(id_number)
+    
     all_prompts_for_id = random.sample(all_prompt_combinations, num_prompts)
-    all_side_decisions = [random.choice([True, False]) for i in range(num_prompts)]
     
     comparison_image_list = [] 
     for model_name in models_to_test:
@@ -148,7 +132,7 @@ for id_number, which_id in enumerate(ids):
         pipe.scheduler = DDPMScheduler.from_pretrained(model_architecture, subfolder="scheduler")
         #print("New scheduler:", pipe.scheduler.config)
         
-        if model_name != "":
+        if not use_non_finetuned:
             pipe.load_lora_weights(full_model_path)
         pipe.set_progress_bar_config(disable=True)
 
@@ -161,20 +145,20 @@ for id_number, which_id in enumerate(ids):
         for i, num_prompt in enumerate(tqdm(range(num_prompts))): 
             prompt_additions = all_prompts_for_id[i]
             prompt = original_prompt
-            # if add_age:
-            #     age_insert = ""
-            #     if isinstance(prompt_additions, str): age_insert = prompt_additions
-            #     else: 
-            #         age_insert = prompt_additions[0] 
-            #         prompt_additions = prompt_additions[1:]
-            #     if age_insert != "": prompt = prompt.replace(" sks person", f" {age_insert} sks person")
+            if add_age:
+                age_insert = ""
+                if isinstance(prompt_additions, str): age_insert = prompt_additions
+                else: 
+                    age_insert = prompt_additions[0] 
+                    prompt_additions = prompt_additions[1:]
+                if age_insert != "": prompt = prompt.replace(" sks person", f" {age_insert} sks person")
                 
 
             if add_gender: prompt = prompt.replace(" sks person", f" {gender} sks person")
-            if add_pose and all_side_decisions[i]: prompt = prompt.replace("portrait", "side-portrait")
+            if add_pose and random.choice([True, False]): prompt = prompt.replace("portrait", "side-portrait")
 
-            if add_background or add_expression or age_phases:
-                if isinstance(prompt_additions, str) and prompt_additions != "":  
+            if add_background:
+                if isinstance(prompt_additions, str): 
                     prompt += f", {prompt_additions}"  
                 else:
                     for addition in prompt_additions:
