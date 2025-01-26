@@ -113,7 +113,11 @@ class DataLoader():
 
         def get_order(file):
             filename = os.path.splitext(os.path.basename(file))[0]
-            return int(filename)
+            try: 
+                return int(filename)
+            except: 
+                filename = filename.split("_")[1]
+                return int(filename)
 
         if not self.files:
             # Assume sub-folders for image classes
