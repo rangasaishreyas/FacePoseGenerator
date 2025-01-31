@@ -1,7 +1,7 @@
 import os
 # num_ids = 0
 # num_imgs = 32 
-from pyeer.eer_info import get_eer_stats
+from pyeer_scripts.eer_info import get_eer_stats
 import os 
 import pandas as pd
 import json 
@@ -23,12 +23,9 @@ from genuine_and_imposter_SynthVsReal import run_create_gen_imp_files_SynthVsRea
 # Cluster setup 
 # main_folder = "/shared/home/darian.tomasevic/ID-Booth/FR_DATASETS/"
 main_folder = "../../FR_DATASETS/"
-# dataset_folders = ["12-2024_SD21_LoRA4_alphaW0.1_Face", "12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments"]
-dataset_folders = [#"12-2024_SD21_LoRA4_alphaW0.1_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB",
-                   #"12-2024_SD21_LoRA4_alphaW0.1_FINAL_FacePortraitPhoto_Gender_Pose_AgePhases_Expression_BackgroundB"
-                   "12-2024_SD21_LoRA4_alphaWNone_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB"
-                   ]#, "12-2024_SD21_LoRA4_alphaW0.1_HeadShot_Photo_Gender_Age_Background"]
-
+dataset_folders = ["12-2024_SD21_LoRA4_alphaWNone_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB"
+                   #"12-2024_SD21_LoRA4_alphaWNone_FacePortrait_Photo_Gender_Pose_BackgroundB_100samples"
+                   ]
 subfolders = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_TimestepWeight"]
 
 # dataset_folders = ["tufts_512_poses_1-7_all_imgs_jpg_per_ID"]
@@ -39,9 +36,13 @@ real_folder = f"{main_folder}tufts_512_poses_1-7_all_imgs_jpg_per_ID/images"
 
 # create pyeer report
 report_which_metrics = [
+    "auc",
     "eer",
     "eer_th",
-    #"auc",
+    "fnmr0",
+    "fnmr100",
+    "fnmr1000",
+    "fmr0",
     "fmr100",
     "fmr1000",
     "gmean",
@@ -49,6 +50,8 @@ report_which_metrics = [
     "imean",
     "istd",
     "fdr",
+    "decidability",
+    "mccoef"
 ]
 
 #########################
@@ -122,7 +125,7 @@ for which_config in ["vsSynth", "vsReal"]: # ""
             stats = get_eer_stats(genuine_scores, impostor_scores)
             stats = stats._asdict()
             print(stats.keys())
-
+            
             stats["fdr"] = compute_fdr(stats)
             
             saving_dict = dict()
