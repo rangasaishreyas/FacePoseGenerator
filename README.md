@@ -47,12 +47,21 @@ TODO
 ```
 
 
+## Training 
+use identity embeddings extracted with pretrained ArcFace recognition model (TODO weights)
+
+```
+TODO
+```
+
 ## Usage
 
 Load trained LoRA weights with [diffusers](https://huggingface.co/docs/diffusers/index):
 ```python
 TODO
 ```
+
+
 
 ## Citation
 
