@@ -19,11 +19,15 @@ This is the official implementation of the ID-Booth fine-tuning framework, which
 TODO
 <div align="center">
   <p>
-    <img width="90%" src="./docs/github_preview_image.jpg">
+    <img width="90%" src="./assets/preview_framework.jpg">
   </p>
 </div>
 
-
+<div align="center">
+  <p>
+    <img width="90%" src="./assets/preview_samples.jpg">
+  </p>
+</div>
 
 
 <!--p align="center">
