@@ -5,15 +5,17 @@
   <br>
   <br>
   <a href='https://arxiv.org/abs/2403.11641'><img src='https://img.shields.io/badge/Paper-arXiv-red'></a>
+  <br>
+  <br>
 </div>  
 <div align="center">
         
 </div>
-This is the official implementation of the ID-Booth fine-tuning framework, which:
+This is the official implementation of the ID-Booth framework, which:
 
-&emsp;🔥 TODO <br>
-&emsp;🔥 TODO <br>
-&emsp;🔥 TODO <br>
+&emsp;🔥 generates in-the-wild images of consenting identities captured in a constrained environment <br>
+&emsp;🔥 utilizes a triplet identity loss to fine-tune Stable Diffusion for generating identity-consistent yet diverse images <br>
+&emsp;🔥 can augment small-scale datasets to improve their suitability for training face recognition models  <br>
 
 
 ## <div align="center"> Results </div>
