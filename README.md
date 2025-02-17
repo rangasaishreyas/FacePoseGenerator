@@ -15,25 +15,20 @@ This is the official implementation of the ID-Booth fine-tuning framework, which
 &emsp;🔥 TODO <br>
 &emsp;🔥 TODO <br>
 
-## <div align="center"> Framework overview </div>
-<div align="center">
-  <p>
-    <img width="90%" src="./assets/preview_framework.jpg">
-  </p>
-</div>
 
 ## <div align="center"> Results </div>
 <div align="center">
   <p>
-    <img width="90%" src="./assets/preview_samples.jpg">
+    <img width="80%" src="./assets/preview_samples.jpg">
   </p>
 </div>
 
-
-<!--p align="center">
-<img src="./docs/ArcBiFaceGAN_framework.jpg" alt="ArcBiFaceGAN_framework" width="500"/>
-</p--> 
-
+## <div align="center"> Framework </div>
+<div align="center">
+  <p>
+    <img width="80%" src="./assets/preview_framework.jpg">
+  </p>
+</div>
 
 ## <div align="center"> Setup </div>
 
