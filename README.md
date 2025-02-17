@@ -1,39 +1,36 @@
 # ID-Booth: Identity-consistent Face Generation with Diffusion Models
 
 <div align="center">
-  Darian Tomašević, Fadi Boutros, Naser Damer, Peter Peer, Vitomir Štruc
+  Darian Tomašević, Fadi Boutros, Chenhao Lin, Naser Damer, Peter Peer, Vitomir Štruc
   <br>
   <br>
   <a href='https://arxiv.org/abs/2403.11641'><img src='https://img.shields.io/badge/Paper-arXiv-red'></a>
+  <br>
+  <br>
 </div>  
 <div align="center">
         
 </div>
-This is the official implementation of the ID-Booth fine-tuning framework, which:
+This is the official implementation of the ID-Booth framework, which:
 
-&emsp;🔥 TODO <br>
-&emsp;🔥 TODO <br>
-&emsp;🔥 TODO <br>
+&emsp;🔥 generates in-the-wild images of consenting identities captured in a constrained environment <br>
+&emsp;🔥 uses a triplet identity loss to fine-tune Stable Diffusion for identity-consistent yet diverse image generation <br>
+&emsp;🔥 can augment small-scale datasets to improve their suitability for training face recognition models  <br>
 
-## <div align="center"> Framework overview </div>
-<div align="center">
-  <p>
-    <img width="90%" src="./assets/preview_framework.jpg">
-  </p>
-</div>
 
 ## <div align="center"> Results </div>
 <div align="center">
   <p>
-    <img width="90%" src="./assets/preview_samples.jpg">
+    <img width="80%" src="./assets/preview_samples.jpg">
   </p>
 </div>
 
-
-<!--p align="center">
-<img src="./docs/ArcBiFaceGAN_framework.jpg" alt="ArcBiFaceGAN_framework" width="500"/>
-</p--> 
-
+## <div align="center"> Framework </div>
+<div align="center">
+  <p>
+    <img width="80%" src="./assets/preview_framework.jpg">
+  </p>
+</div>
 
 ## <div align="center"> Setup </div>
 
@@ -47,12 +44,21 @@ TODO
 ```
 
 
+## Training 
+use identity embeddings extracted with pretrained ArcFace recognition model (TODO weights)
+
+```
+TODO
+```
+
 ## Usage
 
 Load trained LoRA weights with [diffusers](https://huggingface.co/docs/diffusers/index):
 ```python
 TODO
 ```
+
+
 
 ## Citation
 
