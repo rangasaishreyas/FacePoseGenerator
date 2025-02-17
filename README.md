@@ -15,14 +15,14 @@ This is the official implementation of the ID-Booth fine-tuning framework, which
 &emsp;🔥 TODO <br>
 &emsp;🔥 TODO <br>
 
-## <div align="center"> Overview </div>
-TODO
+## <div align="center"> Framework overview </div>
 <div align="center">
   <p>
     <img width="90%" src="./assets/preview_framework.jpg">
   </p>
 </div>
 
+## <div align="center"> Results </div>
 <div align="center">
   <p>
     <img width="90%" src="./assets/preview_samples.jpg">
