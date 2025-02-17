@@ -4,13 +4,12 @@
   Darian Tomašević, Fadi Boutros, Naser Damer, Peter Peer, Vitomir Štruc
   <br>
   <br>
-  <a 
-    href="https://openaccess.thecvf.com/content/CVPR2023W/GCV/papers/Kolf_Identity-Driven_Three-Player_Generative_Adversarial_Network_for_Synthetic-Based_Face_Recognition_CVPRW_2023_paper.pdf">
-    <img src="https://github.com/jankolf/assets/blob/main/IDnet/paper-thecvf.com.svg?raw=true" alt="Paper available at TheCVF">
-  </a>
+  <a href='https://arxiv.org/abs/2403.11641'><img src='https://img.shields.io/badge/Paper-arXiv-red'></a>
 </div>  
-
-This is the official implementation of the paper ID-Booth: Identity-consistent Face Generation with Diffusion Models, which enables: ID-Booth fine-tuning framework enables:
+<div align="center">
+        
+</div>
+This is the official implementation of the ID-Booth fine-tuning framework, which:
 
 &emsp;🔥 TODO <br>
 &emsp;🔥 TODO <br>
