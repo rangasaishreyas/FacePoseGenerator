@@ -1,7 +1,7 @@
 # ID-Booth: Identity-consistent Face Generation with Diffusion Models
 
 <div align="center">
-  Darian Tomašević, Fadi Boutros, Naser Damer, Peter Peer, Vitomir Štruc
+  Darian Tomašević, Fadi Boutros, Chenhao Lin, Naser Damer, Peter Peer, Vitomir Štruc
   <br>
   <br>
   <a href='https://arxiv.org/abs/2403.11641'><img src='https://img.shields.io/badge/Paper-arXiv-red'></a>
