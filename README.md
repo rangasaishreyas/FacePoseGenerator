@@ -44,17 +44,44 @@ TODO
 ```
 
 
+## Usage
+
+To generate images of a desired identity with [Stable Diffusion 2.1](https://huggingface.co/stabilityai/stable-diffusion-2-1), load the corresponding fine-tuned LoRA weights with the [diffusers](https://huggingface.co/docs/diffusers/index) library:
+
+
+```python
+
+```
+Fine-tuned weights for an example identity from the paper can be downloaded [here](TODO).
+The data generation process from the paper is detailed in the [inference_ID-Booth.py](https://github.com/dariant/ID-Booth/blob/main/inference_ID-Booth.py) script.
+
+
 ## Training 
+To fine-tune a model on a desired identity ... you can run the 
 use identity embeddings extracted with pretrained ArcFace recognition model (TODO weights)
+
+More information ... can be found in the train_
+
+
 
 ```
 TODO
 ```
 
-## Usage
 
-Load trained LoRA weights with [diffusers](https://huggingface.co/docs/diffusers/index):
-```python
+
+## Evaluation 
+The experiments of the ID-Booth paper ... consist of three main parts. 
+
+To evaluate the quality, fidelity and diversity of generated images, we rely on the following repositories:
+
+
+Evaluation of quality and diversity is .. notebooks found in directories ". 
+
+Notebooks and scripts for the experiments can also be found in the Evaluation directory. 
+
+
+```
 TODO
 ```
 
@@ -62,10 +89,10 @@ TODO
 
 ## Citation
 
-If you use code or results from this repository, please cite the ID-Booth paper:
+If you use the code or results from this repository, please cite the ID-Booth paper:
 
 ```
-TODO
+TODO Add reference
 ```
 
 ## Acknowledgements
