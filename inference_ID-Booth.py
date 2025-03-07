@@ -15,9 +15,9 @@ from itertools import product
 from utils.sorting_utils import natural_keys
 
 backgrounds_list = ["","forest", "city street", "beach", "office", "bus", "laboratory", "factory", "construction site", "hospital", "night club"]
-
 #backgrounds_list = ["in the forest", "in the city", "at the beach", "at the office", "in the bus", "in the laboratory", "at the factory", "at the construction site", "at the hospital", "at the night club"]
 backgrounds_list = [f"{b} background"  if b != "" else "" for b in backgrounds_list]#
+
 # backgrounds_list = [""] + backgrounds_list * 2
 
 # expression_list = ["neutral", "happy", "sad", "angry", "shocked"]# "crying", "ashamed"]
@@ -68,10 +68,9 @@ num_inference_steps = 30 #30
 which_model_folder = "12-2024_SD21_LoRA4_alphaWNone"  #0.1 # None
 folder_of_models = f"OUTPUT_MODELS/{which_model_folder}" #0.1
 checkpoint =  "checkpoint-31-6400"  # "checkpoint-19-4000" #9-2000 #"checkpoint-12-2600"# "checkpoint-12-2600" 
-# TODO models_to_test = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_TimestepWeight"]
-models_to_test = ["no_new_Loss"]
+models_to_test = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_TimestepWeight"]
 
-folder_output = f"GENERATED_SAMPLES_NonFinetuned/{which_model_folder}_FacePortrait_Photo_21"
+folder_output = f"GENERATED_SAMPLES/{which_model_folder}_FacePortrait_Photo_21"  # _NonFinetuned
 if add_gender: folder_output += "_Gender"
 if add_pose: folder_output+= "_Pose"
 if add_age: folder_output+= "_Age"

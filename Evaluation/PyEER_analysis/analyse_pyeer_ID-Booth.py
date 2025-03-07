@@ -22,11 +22,13 @@ from genuine_and_imposter_SynthVsReal import run_create_gen_imp_files_SynthVsRea
 
 # Cluster setup 
 # main_folder = "/shared/home/darian.tomasevic/ID-Booth/FR_DATASETS/"
-main_folder = "../../FR_DATASETS/"
+main_folder = "../../FR_DATASETS/" #  "../../FR_DATASETS_ABLATION/"
 dataset_folders = ["12-2024_SD21_LoRA4_alphaWNone_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB"
                    #"12-2024_SD21_LoRA4_alphaWNone_FacePortrait_Photo_Gender_Pose_BackgroundB_100samples"
+                   # "01-2025_ID-Booth_ABLATION_LOSS"
                    ]
 subfolders = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_TimestepWeight"]
+# subfolders = ["no_new_Loss_NoPrior", "no_new_Loss", "triplet_prior_loss_TimestepWeight"]
 
 # dataset_folders = ["tufts_512_poses_1-7_all_imgs_jpg_per_ID"]
 # subfolders = ["images"]

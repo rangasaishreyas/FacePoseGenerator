@@ -1,7 +1,7 @@
 architecture = "resnet50"#"resnet50"
 
 # root_folder = "/shared/home/darian.tomasevic/ID-Booth/"
-root_folder = "/home/darian/Desktop/Diffusion/ID-Booth/"
+root_folder = ".."
 
 #dataset_folder = "../Generated_Split_Images_112x112/"
 
@@ -18,7 +18,7 @@ root_folder = "/home/darian/Desktop/Diffusion/ID-Booth/"
 # dataset_folder = f"{root_folder}/FR_DATASETS/FR_DATASETS_SDXL/tufts_512_poses_1-7_all_imgs_jpg_per_ID"
 # models = ["images"]
 
-folder_to_test = "12-2024_SD21_LoRA4_alphaW0.1_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB"
+folder_to_test = "12-2024_SD21_LoRA4_alphaWNone_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB"
 # folder_to_test = "12-2024_SD21_LoRA4_alphaW0.1_FINAL_FacePortraitPhoto_Gender_Pose_AgePhases_Expression_BackgroundB"
 
 dataset_folder = f"{root_folder}/FR_DATASETS/{folder_to_test}"
@@ -32,10 +32,11 @@ models = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_Tim
 
 model = "TODO"
 benchmark_folder = f"{root_folder}/FR_training/VALIDATION_DATASETS_from_webface"
-augment = False 
+augment = True 
 stopping_condition_epochs = 0
 
-output_folder_name_start = "REC_EXP_01_2025_LFW_MultiRun_Verification1_CosFace"
+verification_frequency = 1
+output_folder_name_start = f"REC_EXP_01_2025_LFW_Verification{verification_frequency}"
 
 
 EMBEDDING_TYPE = [

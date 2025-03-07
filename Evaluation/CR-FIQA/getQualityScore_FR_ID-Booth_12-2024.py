@@ -158,6 +158,7 @@ def main(param):
     all_datasets_path = os.path.join(experiment_folder, data_folder) 
     all_datasets = os.listdir(all_datasets_path)
 
+    # all_datasets = ["no_new_Loss_NoPrior"]
     # TODO ... 2500 random images or 5000 images (since some have 95 samples vs more ... but do we even need more samples ... maybe?) 
 
     number_of_images_for_comparison = 10000 # TODO ... just do all? (or 2000)
@@ -200,7 +201,7 @@ def main(param):
             
             embedding, quality = face_model.get_batch_feature(image_list, batch_size=16)
 
-            path_to_output_folder = os.path.join("ID-Booth_FR_CRFIQA_12-2024", os.path.basename(experiment_folder))#experiment_folder, data_folder + "_" + param.score_file_name )
+            path_to_output_folder = os.path.join("RESULTS_ID-Booth_FR_CRFIQA_12-2024", os.path.basename(experiment_folder))#experiment_folder, data_folder + "_" + param.score_file_name )
             os.makedirs(path_to_output_folder, exist_ok=True)
             
             path_to_scores = os.path.join(path_to_output_folder,  f"{dataset}.txt")

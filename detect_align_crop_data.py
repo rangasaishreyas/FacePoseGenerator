@@ -221,10 +221,11 @@ def main():
     args = parser.parse_args()
     
     # which_folders = os.listdir("GENERATED_SAMPLES")
-    which_folders = ["12-2024_SD21_LoRA4_alphaW0.1_HeadShot_Photo_Gender_Background",
-                     "12-2024_SD21_LoRA4_alphaW0.1_HeadShot_Photo_Gender_Age_Background"
-                    #"12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments_Ages",
-                    ]#"12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments_Ages"]
+    which_folders = [#"12-2024_SD21_LoRA4_alphaWNone_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB",
+                    #"12-2024_SD21_LoRA4_alphaWNone_FacePortrait_Photo_Gender_Pose_BackgroundB_100samples"
+                    #"01-2025_ID-Booth_ABLATION",
+                    "01-2025_ID-Booth_ABLATION_LOSS"
+                    ]
     
     #which_folders = ["FACE_DATASETS/tufts_512_poses_1-7_all_imgs_jpg_per_ID"]
     #which_folders = ["../ID-Diff/FACE_DATASETS/FFHQ_512"]
@@ -235,14 +236,12 @@ def main():
     
 
     for which_folder in which_folders:
-        args.in_folder = f"GENERATED_SAMPLES/{which_folder}"
-        #args.in_folder = which_folder
+        args.in_folder = f"GENERATED_SAMPLES_ABLATION/{which_folder}"
         print(which_folder)
-        args.out_folder = f"FR_DATASETS/{args.in_folder.split('/')[-1]}"#"Testing_Naser_aligned_samples"
+        args.out_folder = f"FR_DATASETS_ABLATION/{args.in_folder.split('/')[-1]}"#"Testing_Naser_aligned_samples"
         args.batchsize = 8
 
         model_folders = os.listdir(args.in_folder)
-
         missing_images_dict = dict()
 
         for model_fold in model_folders:

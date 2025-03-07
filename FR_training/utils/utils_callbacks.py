@@ -227,12 +227,13 @@ class CallBackModelCheckpointOld(object):
         #         )
        # else:
         #if saving_best or global_step > 100 and self.rank == 0:
+        # print(backbone)
         torch.save(
-            backbone.module.state_dict(),
+            backbone.state_dict(),
             os.path.join(self.output, str(global_step) + "_backbone.pth"),
         )
         #if saving_best or global_step > 100 and self.rank == 0 and header is not None:
         torch.save(
-            header.module.state_dict(),
+            header.state_dict(),
             os.path.join(self.output, str(global_step) + "_header.pth"),
         )

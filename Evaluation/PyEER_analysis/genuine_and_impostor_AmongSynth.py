@@ -278,7 +278,7 @@ def run_create_gen_imp_files_AmongSynth(datadir, fr_path, outdir):
     num_ids = 0 
     batchsize = 16
     num_imgs = 0
-    seed = 7 #0 #42  #100
+    seed = 0 #0 #42  #100
     set_all_seeds(seed)
 
     args = Namespace(datadir = datadir,

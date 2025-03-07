@@ -1,7 +1,7 @@
 architecture = "resnet50"#"resnet50"#"resnet50"
 
 # root_folder = "/shared/home/darian.tomasevic/ID-Booth/"
-root_folder = "/home/darian/Desktop/Diffusion/ID-Booth/"
+root_folder = ".."
 #dataset_folder = "../Generated_Split_Images_112x112/"
 
 # dataset_folder = f"{root_folder}/FR_DATASETS/FR_DATASETS_SDXL/SDXL_DB_LoRA_Tufts_base_prompt_16_07_png"
@@ -36,7 +36,7 @@ models = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_Tim
 
 model = "TODO"
 benchmark_folder = f"{root_folder}/FR_training/VALIDATION_DATASETS_from_webface"
-augment = False 
+augment = True 
 stopping_condition_epochs = 6 #6 #6 # 10 # TODO was 6 
 stop_only_after_epoch_schedule = False 
 
