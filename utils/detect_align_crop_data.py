@@ -236,9 +236,9 @@ def main():
     
 
     for which_folder in which_folders:
-        args.in_folder = f"GENERATED_SAMPLES_ABLATION/{which_folder}"
+        args.in_folder = f"../GENERATED_SAMPLES_ABLATION/{which_folder}"
         print(which_folder)
-        args.out_folder = f"FR_DATASETS_ABLATION/{args.in_folder.split('/')[-1]}"#"Testing_Naser_aligned_samples"
+        args.out_folder = f"../FR_DATASETS_ABLATION/{args.in_folder.split('/')[-1]}"#"Testing_Naser_aligned_samples"
         args.batchsize = 8
 
         model_folders = os.listdir(args.in_folder)

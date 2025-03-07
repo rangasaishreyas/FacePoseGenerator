@@ -2,10 +2,10 @@ import os
 import shutil 
 from tqdm import tqdm 
 
-root_folder = "FR_DATASETS"
+root_folder = "../FR_DATASETS"
 # With additional 10 or 21 synthetic images 
 how_many_samples = 100
-target_root = f"FR_DATASETS_AUGMENTED_+{how_many_samples}_samples"
+target_root = f"../FR_DATASETS_AUGMENTED_+{how_many_samples}_samples"
 
 starting_dataset = f"{root_folder}/tufts_512_poses_1-7_all_imgs_jpg_per_ID/images"
 # which_folders = ["12-2024_SD21_LoRA4_alphaWNone_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB"]
