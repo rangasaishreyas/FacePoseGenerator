@@ -81,7 +81,7 @@ FACE_DATASET
 └─── ID-2
 └─── ...
 ```
-The required ID embeddings can be extracted with the ... script... . The ArcFace model, pretrained on MS...  is available here. 
+The required ID embeddings can be extracted with the ... script... . The ArcFace model, pretrained on MS...  is available here. The downloaded model should be placed in the [ArcFace_files](https://github.com/dariant/ID-Booth/tree/main/ArcFace_files) directory.
 
 To run the script ... specify the path to the directory with identity images ...
 ... Path specified in the [config_train_SD21.py](https://github.com/dariant/ID-Booth/blob/main/configs/config_train_SD21.py) file.
