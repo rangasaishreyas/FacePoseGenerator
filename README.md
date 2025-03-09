@@ -63,7 +63,7 @@ pipe = StableDiffusionPipeline.from_pretrained(base_model, torch_dtype=torch.flo
 pipe.scheduler = DDPMScheduler.from_pretrained(base_model, subfolder="scheduler")
 pipe.load_lora_weights(lora_checkpoint)
                
-output = pipe(prompt=prompt, negative_prompt=negative_prompt, num_inference_steps=30, guidance_scale=5.0, width=512, height=512)
+output = pipe(prompt=prompt, negative_prompt=negative_prompt, num_inference_steps=30, guidance_scale=5.0)
 output.images[0].save(f"ID_1_{prompt}.png")
 ```
 Fine-tuned weights for an example identity from the paper can be downloaded [here](TODO).
