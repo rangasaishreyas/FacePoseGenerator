@@ -80,15 +80,13 @@ FACE_DATASET
 └───ID-1
 │   └───images
 │   |       image_0.png
-│   |       image_1.png
 │   |       ...
 │   └───ArcFace_embeds
-│       │   image_0.pt
-│       │   image_1.pt
-│       │   ...
+│           image_0.pt
+│           ...
 └───ID-2
-    │   images
-    │   ArcFace_embeds
+    └───images
+    └───ArcFace_embeds
 ```
 
 
