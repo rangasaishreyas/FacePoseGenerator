@@ -56,8 +56,8 @@ from diffusers import StableDiffusionPipeline, DDPMScheduler
 base_model = "stabilityai/stable-diffusion-2-1-base"
 lora_checkpoint =  "trained_lora_models/ID_1" 
 
-prompt = f"face portrait photo of sks person"
-negative_prompt = "cartoon, cgi, render, illustration, painting, drawing, black and white, bad body proportions, landscape"         
+prompt = "face portrait photo of male sks person, city street background"
+negative_prompt = "cartoon, render, illustration, painting, drawing, black and white, bad body proportions, landscape"         
 
 pipe = StableDiffusionPipeline.from_pretrained(base_model, torch_dtype=torch.float16).to("cuda:0")      
 pipe.scheduler = DDPMScheduler.from_pretrained(base_model, subfolder="scheduler")
