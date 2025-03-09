@@ -16,13 +16,14 @@ This is the official implementation of the ID-Booth framework, which:
 &emsp;🔥 generates in-the-wild images of consenting identities captured in a constrained environment <br>
 &emsp;🔥 uses a triplet identity loss to fine-tune Stable Diffusion for identity-consistent yet diverse image generation <br>
 &emsp;🔥 can augment small-scale datasets to improve their suitability for training face recognition models  <br>
-
+<br>
 
 <div align="center">
   <p>
     <img width="80%" src="./assets/preview_samples.jpg">
   </p>
 </div>
+
 
 ## <div align="center"> Installation </div>
 
