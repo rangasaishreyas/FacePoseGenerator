@@ -18,7 +18,6 @@ This is the official implementation of the ID-Booth framework, which:
 &emsp;🔥 can augment small-scale datasets to improve their suitability for training face recognition models  <br>
 
 
-## <div align="center"> Result: Synthetic in-the-wild images of real identities </div>
 <div align="center">
   <p>
     <img width="80%" src="./assets/preview_samples.jpg">
@@ -38,9 +37,9 @@ TODO
 
 
 
-## <div align="center"> Using ID-Booth fine-tuned models </div>
+## <div align="center"> Generating identity-specific images </div>
 
-To generate images of a desired identity with [Stable Diffusion 2.1](https://huggingface.co/stabilityai/stable-diffusion-2-1), load the corresponding fine-tuned LoRA weights with the [diffusers](https://huggingface.co/docs/diffusers/index) library:
+To generate images of a desired identity with [Stable Diffusion 2.1](https://huggingface.co/stabilityai/stable-diffusion-2-1), use the [diffusers](https://huggingface.co/docs/diffusers/index) library to load the corresponding LoRA weights, which were trained with the ID-Booth framework.
 
 
 ```python
