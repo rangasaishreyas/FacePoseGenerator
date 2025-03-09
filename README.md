@@ -54,7 +54,7 @@ import torch
 from diffusers import StableDiffusionPipeline, DDPMScheduler
 
 base_model = "stabilityai/stable-diffusion-2-1-base"
-lora_checkpoint =  "trained_lora_models/ID_1" 
+lora_checkpoint =  "trained_lora_models/ID_1/checkpoint-31-6400" 
 
 prompt = "face portrait photo of male sks person, city street background"
 negative_prompt = "cartoon, render, illustration, painting, drawing, black and white, bad body proportions, landscape"         
