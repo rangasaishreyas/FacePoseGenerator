@@ -53,25 +53,19 @@ To generate images of a desired identity with [Stable Diffusion 2.1](https://hug
 import torch
 from diffusers import StableDiffusionPipeline, DDPMScheduler
 
-device = "cuda:0"
-guidance_scale = 5.0
-num_inference_steps = 30
-resolution = 512
-
 base_model = "stabilityai/stable-diffusion-2-1-base"
 lora_checkpoint =  "trained_lora_models/ID_1" 
 
 prompt = f"face portrait photo of sks person"
 negative_prompt = "cartoon, cgi, render, illustration, painting, drawing, black and white, bad body proportions, landscape"         
-number_of_samples = 20
 
-pipe = StableDiffusionPipeline.from_pretrained(model_architecture, torch_dtype=torch.float16).to(device)      
+pipe = StableDiffusionPipeline.from_pretrained(model_architecture, torch_dtype=torch.float16).to("cuda:0")      
 pipe.scheduler = DDPMScheduler.from_pretrained(model_architecture, subfolder="scheduler")
 pipe.load_lora_weights(lora_checkpoint)
                
 # TODO ... check if images can instantly be saved? 
-for j in range(number_of_samples):  
-  image = pipe(prompt=prompt, negative_prompt=negative_prompt, generator=generator, num_inference_steps=num_inference_steps, guidance_scale=guidance_scale, width=resolution, height=resolution)
+for j in range(10):  
+  image = pipe(prompt=prompt, negative_prompt=negative_prompt, generator=generator, num_inference_steps=30, guidance_scale=5.0, width=512, height=512)
   save_image(output, fp=f"GENERATED_SAMPLES"/{i}_{j}_{prompt}.png")      
 ```
 Fine-tuned weights for an example identity from the paper can be downloaded [here](TODO).
