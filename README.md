@@ -51,14 +51,8 @@ To generate images of a desired identity with [Stable Diffusion 2.1](https://hug
 
 ```python
 
-
-from diffusers import StableDiffusionPipeline
 import torch
-from torchvision.utils import save_image
-from diffusers import DPMSolverMultistepScheduler
-from diffusers import DDPMScheduler
-from diffusers import AutoPipelineForText2Image
-from itertools import product 
+from diffusers import StableDiffusionPipeline, DDPMScheduler
 
 
 device = "cuda:0"
