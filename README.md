@@ -59,11 +59,11 @@ lora_checkpoint =  "trained_lora_models/ID_1/checkpoint-31-6400"
 prompt = "face portrait photo of male sks person, city street background"
 negative_prompt = "cartoon, render, illustration, painting, drawing, black and white, bad body proportions, landscape"         
 
-pipeline = StableDiffusionPipeline.from_pretrained(base_model, torch_dtype=torch.float16).to("cuda:0")      
+pipe = StableDiffusionPipeline.from_pretrained(base_model, torch_dtype=torch.float16).to("cuda:0")      
 pipe.scheduler = DDPMScheduler.from_pretrained(base_model, subfolder="scheduler")
 pipe.load_lora_weights(lora_checkpoint)
                
-image = pipeline(prompt=prompt,
+image = pipe(prompt=prompt,
               negative_prompt=negative_prompt,
               num_inference_steps=30,
               guidance_scale=5.0).images[0]
