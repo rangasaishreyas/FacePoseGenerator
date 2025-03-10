@@ -92,9 +92,7 @@ FACE_DATASET
 └─── ...
 ```
 The required ID embeddings can be extracted with the [extract_ArcFace_embeds.py](https://github.com/dariant/ID-Booth/blob/main/extract_ArcFace_embeds.py) script. 
-
-To run the script ... specify the path to the directory with identity images ...
-... Path specified in the [config_train_SD21.py](https://github.com/dariant/ID-Booth/blob/main/configs/config_train_SD21.py) file.
+Before running [train_ID-Booth.py](https://github.com/dariant/ID-Booth/blob/main/train_ID-Booth.py), specify the path to the source folder with identity images in [config_train_SD21.py](https://github.com/dariant/ID-Booth/blob/main/configs/config_train_SD21.py).
 
 
 ## <div align="center"> Evaluating the synthetic data </div>
