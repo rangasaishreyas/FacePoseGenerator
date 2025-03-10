@@ -105,16 +105,9 @@ For the evaluation of generated synthetic images, we rely on the following repos
 * [6DRepNet](https://github.com/thohemp/6DRepNet) to estimate the pitch, yaw and roll of head poses
 * [PyEER](https://github.com/manuelaguadomtz/pyeer) to analyse identity consistency and separability
 
-Scripts for ... can be found in the [Evaluation](https://github.com/dariant/ID-Booth/tree/main/Evaluation) directory.
+Notebooks and scripts for reproducing the results in the paper can be found in the [Evaluation](https://github.com/dariant/ID-Booth/tree/main/Evaluation) directory. 
 
-
-Notebooks and scripts for the experiments can also be found in the Evaluation directory. 
-
-
-```
-TODO
-```
-
+To also evaluate the utility of the produced data, we also use it to train a deep face recognition model, following the [train_FR.py](https://github.com/dariant/ID-Booth/blob/main/FR_training/train_FR.py) script. The performance of these models is then evaluated on state-of-the-art verification benchmarks with [test_FR.py](https://github.com/dariant/ID-Booth/blob/main/FR_training/test_FR.py).  
 
 
 ## Citation
