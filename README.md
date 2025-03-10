@@ -97,13 +97,16 @@ To run the script ... specify the path to the directory with identity images ...
 ... Path specified in the [config_train_SD21.py](https://github.com/dariant/ID-Booth/blob/main/configs/config_train_SD21.py) file.
 
 
-## Evaluation 
-The experiments of the ID-Booth paper ... consist of three main parts. 
+## <div align="center"> Evaluating the synthetic data </div>
 
-To evaluate the quality, fidelity and diversity of generated images, we rely on the following repositories:
+For the evaluation of generated synthetic images, we rely on the following repositories:
+* [dgm-eval](https://github.com/layer6ai-labs/dgm-eval) for ..
+* [CR-FIQA](https://github.com/fdbtrs/CR-FIQA) ...
+* [6DRepNet](https://github.com/thohemp/6DRepNet) to estimate the pitch, yaw and roll of head poses
+* [PyEER](https://github.com/manuelaguadomtz/pyeer) to analyse identity consistency and separability
 
+Scripts for ... can be found in the [Evaluation](https://github.com/dariant/ID-Booth/tree/main/Evaluation) directory.
 
-Evaluation of quality and diversity is .. notebooks found in directories ". 
 
 Notebooks and scripts for the experiments can also be found in the Evaluation directory. 
 
