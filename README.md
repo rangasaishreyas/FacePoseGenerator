@@ -97,13 +97,6 @@ To run the script ... specify the path to the directory with identity images ...
 ... Path specified in the [config_train_SD21.py](https://github.com/dariant/ID-Booth/blob/main/configs/config_train_SD21.py) file.
 
 
-<div align="center">
-  <p>
-    <img width="80%" src="./assets/preview_framework.jpg">
-  </p>
-</div>
-
-
 ## Evaluation 
 The experiments of the ID-Booth paper ... consist of three main parts. 
 
