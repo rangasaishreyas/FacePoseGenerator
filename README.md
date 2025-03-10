@@ -20,6 +20,11 @@ This is the official implementation of the ID-Booth framework, which:
 
 <div align="center">
   <p>
+    <img width="80%" src="./assets/preview_framework.jpg">
+  </p>
+</div>
+<div align="center">
+  <p>
     <img width="80%" src="./assets/preview_samples.jpg">
   </p>
 </div>
