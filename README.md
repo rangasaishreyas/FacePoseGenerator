@@ -76,12 +76,12 @@ To perform ID-Booth fine-tuning of [Stable Diffusion 2.1](https://huggingface.co
 FACE_DATASET
 └─── ID_1
 │   └─── images
-│   |       image_0.png
-│   |       image_1.png
+│   |       sample_0.png
+│   |       sample_1.png
 │   |       ...
 │   └─── ArcFace_embeds
-│           image_0.pt
-│           image_1.pt
+│           sample_0.pt
+│           sample_1.pt
 │           ...
 └─── ID_2
 └─── ...
