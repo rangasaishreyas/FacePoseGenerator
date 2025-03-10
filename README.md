@@ -100,10 +100,10 @@ To run the script ... specify the path to the directory with identity images ...
 ## <div align="center"> Evaluating the synthetic data </div>
 
 For the evaluation of generated synthetic images, we rely on the following repositories:
-* [dgm-eval](https://github.com/layer6ai-labs/dgm-eval) for ..
-* [CR-FIQA](https://github.com/fdbtrs/CR-FIQA) ...
-* [6DRepNet](https://github.com/thohemp/6DRepNet) to estimate the pitch, yaw and roll of head poses
-* [PyEER](https://github.com/manuelaguadomtz/pyeer) to analyse identity consistency and separability
+* [dgm-eval](https://github.com/layer6ai-labs/dgm-eval) to measure quality, fidelity and diversity,
+* [CR-FIQA](https://github.com/fdbtrs/CR-FIQA) to determine the face image quality,
+* [6DRepNet](https://github.com/thohemp/6DRepNet) to estimate the pitch, yaw and roll of head poses,
+* [PyEER](https://github.com/manuelaguadomtz/pyeer) to analyse identity consistency and separability.
 
 Notebooks and scripts for reproducing the results in the paper can be found in the [Evaluation](https://github.com/dariant/ID-Booth/tree/main/Evaluation) directory. 
 
