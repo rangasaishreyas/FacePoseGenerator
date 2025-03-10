@@ -33,6 +33,14 @@ conda activate id-booth
 pip install -r requirements.txt
 ```
 
+## <div align="center"> Dowload links for pretrained models </div>
+
+To generate images of identities found in the paper, download their fine-tuned LoRA weights:
+*  [ID-Booth LoRA weights](https://unilj-my.sharepoint.com/:u:/g/personal/darian_tomasevic_fri1_uni-lj_si/ET2lpGwcIjlNhZEBnYxPDwYBgGcVl08rrXJvY4U3t3KWMg?e=Vjahfd)
+
+To create your own fine-tuned model with ID-Booth, download the pretrained recognition model:
+*  [ArcFace recognition model](https://unilj-my.sharepoint.com/:u:/g/personal/darian_tomasevic_fri1_uni-lj_si/EfSmDfvsVlZEuOBqieDl4zEBJkTJ65aBnUtrC4q5nT2a-g?e=PBYj7o)
+
 
 
 ## <div align="center"> Generating identity-specific images </div>
@@ -81,7 +89,7 @@ FACE_DATASET
 └─── ID-2
 └─── ...
 ```
-The required ID embeddings can be extracted with the ... script... . The ArcFace model, pretrained on MS...  is available here. The downloaded model should be placed in the [ArcFace_files](https://github.com/dariant/ID-Booth/tree/main/ArcFace_files) directory.
+The required ID embeddings can be extracted with the [extract_ArcFace_embeds.py](https://github.com/dariant/ID-Booth/blob/main/extract_ArcFace_embeds.py) script. The utilized pretrained ArcFace model can be downloaded [here]((https://unilj-my.sharepoint.com/:u:/g/personal/darian_tomasevic_fri1_uni-lj_si/EfSmDfvsVlZEuOBqieDl4zEBJkTJ65aBnUtrC4q5nT2a-g?e=PBYj7o)). The downloaded model should be placed in the [ArcFace_files](https://github.com/dariant/ID-Booth/tree/main/ArcFace_files) directory.
 
 To run the script ... specify the path to the directory with identity images ...
 ... Path specified in the [config_train_SD21.py](https://github.com/dariant/ID-Booth/blob/main/configs/config_train_SD21.py) file.
