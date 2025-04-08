@@ -118,7 +118,7 @@ TODO Add reference
 
 ## Acknowledgements
 
-Supported in parts by the Slovenian Research and Innovation Agency (ARIS) through the Research Programmes P2-0250 (B) "Metrology and Biometric Systems" and P2--0214 (A) “Computer Vision”, the ARIS Project J2-50065 "DeepFake DAD" and the ARIS Young Researcher programme.
+Supported in parts by the Slovenian Research and Innovation Agency (ARIS) through the Research Programmes P2-0250 (B) "Metrology and Biometric Systems" and P2--0214 (A) “Computer Vision”, the ARIS Project J2-50065 "DeepFake DAD" and the ARIS Young Researcher Programme.
 
 <img src="./assets/ARIS_logo_eng_resized.jpg" alt="ARIS_logo_eng_resized" width="400"/>
 
