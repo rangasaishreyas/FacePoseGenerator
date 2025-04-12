@@ -1,0 +1,7 @@
+numpy<1.26.0
+torch==2.1.2
+torchvision==0.16.2
+diffusers==0.32.2
+transformers==4.34.1
+peft
+accelerate
