@@ -20,6 +20,11 @@ This is the official implementation of the ID-Booth framework, which:
 
 <div align="center">
   <p>
+    <img width="80%" src="./assets/preview_framework.jpg">
+  </p>
+</div>
+<div align="center">
+  <p>
     <img width="80%" src="./assets/preview_samples.jpg">
   </p>
 </div>
@@ -87,33 +92,20 @@ FACE_DATASET
 └─── ...
 ```
 The required ID embeddings can be extracted with the [extract_ArcFace_embeds.py](https://github.com/dariant/ID-Booth/blob/main/extract_ArcFace_embeds.py) script. 
-
-To run the script ... specify the path to the directory with identity images ...
-... Path specified in the [config_train_SD21.py](https://github.com/dariant/ID-Booth/blob/main/configs/config_train_SD21.py) file.
+Before running [train_ID-Booth.py](https://github.com/dariant/ID-Booth/blob/main/train_ID-Booth.py), specify the path to the source folder with identity images in [config_train_SD21.py](https://github.com/dariant/ID-Booth/blob/main/configs/config_train_SD21.py).
 
 
-<div align="center">
-  <p>
-    <img width="80%" src="./assets/preview_framework.jpg">
-  </p>
-</div>
+## <div align="center"> Evaluating the synthetic data </div>
 
+For the evaluation of generated synthetic images, we rely on the following repositories:
+* [dgm-eval](https://github.com/layer6ai-labs/dgm-eval) to measure quality, fidelity and diversity,
+* [CR-FIQA](https://github.com/fdbtrs/CR-FIQA) to determine the face image quality,
+* [6DRepNet](https://github.com/thohemp/6DRepNet) to estimate the pitch, yaw and roll of head poses,
+* [PyEER](https://github.com/manuelaguadomtz/pyeer) to analyse identity consistency and separability.
 
-## Evaluation 
-The experiments of the ID-Booth paper ... consist of three main parts. 
+Notebooks and scripts for reproducing the results in the paper can be found in the [Evaluation](https://github.com/dariant/ID-Booth/tree/main/Evaluation) directory. 
 
-To evaluate the quality, fidelity and diversity of generated images, we rely on the following repositories:
-
-
-Evaluation of quality and diversity is .. notebooks found in directories ". 
-
-Notebooks and scripts for the experiments can also be found in the Evaluation directory. 
-
-
-```
-TODO
-```
-
+To also evaluate the utility of the produced data, we also use it to train a deep face recognition model, following the [train_FR.py](https://github.com/dariant/ID-Booth/blob/main/FR_training/train_FR.py) script. The performance of these models is then evaluated on state-of-the-art verification benchmarks with [test_FR.py](https://github.com/dariant/ID-Booth/blob/main/FR_training/test_FR.py).  
 
 
 ## Citation
@@ -126,7 +118,7 @@ TODO Add reference
 
 ## Acknowledgements
 
-Supported in parts by the Slovenian Research and Innovation Agency ARIS through the Research Programmes P2-0250(B) "Metrology and Biometric Systems" and P2--0214 (A) “Computer Vision”, the ARIS Project J2-2501(A) "DeepBeauty" and the ARIS Young Researcher Program.
+Supported in parts by the Slovenian Research and Innovation Agency (ARIS) through the Research Programmes P2-0250 (B) "Metrology and Biometric Systems" and P2--0214 (A) “Computer Vision”, the ARIS Project J2-50065 "DeepFake DAD" and the ARIS Young Researcher Programme.
 
 <img src="./assets/ARIS_logo_eng_resized.jpg" alt="ARIS_logo_eng_resized" width="400"/>
 
