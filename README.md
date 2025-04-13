@@ -40,7 +40,7 @@ pip install -r requirements.txt
 
 ## <div align="center"> Dowload links for pretrained models </div>
 
-To generate images of identities found in the paper, download their fine-tuned [ID-Booth LoRA weights](https://unilj-my.sharepoint.com/:u:/g/personal/darian_tomasevic_fri1_uni-lj_si/ET2lpGwcIjlNhZEBnYxPDwYBgGcVl08rrXJvY4U3t3KWMg?e=Vjahfd).
+To generate images of identities found in the paper, download their fine-tuned [ID-Booth LoRA weights](https://unilj-my.sharepoint.com/:u:/g/personal/darian_tomasevic_fri1_uni-lj_si/EXnMuZvIG49HuNkOomD_2K8BNvba8f8kJcWb6M7hGPCA0w).
 To create your own fine-tuned model with ID-Booth, download the pretrained [ArcFace recognition model](https://unilj-my.sharepoint.com/:u:/g/personal/darian_tomasevic_fri1_uni-lj_si/EfSmDfvsVlZEuOBqieDl4zEBJkTJ65aBnUtrC4q5nT2a-g?e=PBYj7o), and place the weights into the [ArcFace_files](https://github.com/dariant/ID-Booth/tree/main/ArcFace_files) directory.
 
 
@@ -103,7 +103,7 @@ For the evaluation of generated synthetic images, we rely on the following repos
 * [6DRepNet](https://github.com/thohemp/6DRepNet) to estimate the pitch, yaw and roll of head poses,
 * [PyEER](https://github.com/manuelaguadomtz/pyeer) to analyse identity consistency and separability.
 
-Notebooks and scripts for reproducing the results in the paper can be found in the [Evaluation](https://github.com/dariant/ID-Booth/tree/main/Evaluation) directory. 
+Notebooks and scripts for reproducing the results in the paper can be found in the [Evaluation](https://github.com/dariant/ID-Booth/tree/main/Evaluation) directory, while fine-tuned LoRA weights of different approaches can be downloaded [here](https://unilj-my.sharepoint.com/:f:/g/personal/darian_tomasevic_fri1_uni-lj_si/Esv2DimWDExAtkBjx-6SDoMBvP4TiD_N-gBaPhf10ekKrA?e=BCKzQb). 
 
 To also evaluate the utility of the produced data, we also use it to train a deep face recognition model, following the [train_FR.py](https://github.com/dariant/ID-Booth/blob/main/FR_training/train_FR.py) script. The performance of these models is then evaluated on state-of-the-art verification benchmarks with [test_FR.py](https://github.com/dariant/ID-Booth/blob/main/FR_training/test_FR.py).  
 
