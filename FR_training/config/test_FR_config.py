@@ -3,41 +3,22 @@ architecture = "resnet50"#"resnet50"
 # root_folder = "/shared/home/darian.tomasevic/ID-Booth/"
 root_folder = ".."
 
-#dataset_folder = "../Generated_Split_Images_112x112/"
+# folder_to_test = "12-2024_SD21_LoRA4_alphaWNone_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB"
+folder_to_test = "12-2024_SD21_LoRA4_alphaWNone_FacePortrait_Photo_Gender_Pose_BackgroundB_100samples"
+models = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_TimestepWeight"]
 
-# dataset_folder = f"{root_folder}/FR_DATASETS/FR_DATASETS_SDXL/SDXL_DB_LoRA_Tufts_base_prompt_16_07_png"
-# dataset_folder = f"{root_folder}/FR_DATASETS/FR_DATASETS_SDXL/SDXL_DB_LoRA_Tufts_combined_16_07_png"
-# dataset_folder = f"{root_folder}/FR_DATASETS/FR_DATASETS_AUGMENTED_+21_samples/SDXL_DB_LoRA_Tufts_base_prompt_16_07_png"
-# dataset_folder = f"{root_folder}/FR_DATASETS/FR_DATASETS_AUGMENTED_+21_samples/SDXL_DB_LoRA_Tufts_combined_16_07_png"
-
-# dataset_folder = f"{root_folder}/FR_DATASETS/FR_DATASETS_AUGMENTED_+10_samples/SDXL_DB_LoRA_Tufts_combined_16_07_png"
-# dataset_folder = f"{root_folder}/FR_DATASETS/FR_DATASETS_AUGMENTED_+10_samples/SDXL_DB_LoRA_Tufts_base_prompt_16_07_png"
-
-
-# # TODO 
-# dataset_folder = f"{root_folder}/FR_DATASETS/FR_DATASETS_SDXL/tufts_512_poses_1-7_all_imgs_jpg_per_ID"
+# folder_to_test = "tufts_512_poses_1-7_all_imgs_jpg_per_ID"
 # models = ["images"]
 
-folder_to_test = "12-2024_SD21_LoRA4_alphaWNone_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB"
-# folder_to_test = "12-2024_SD21_LoRA4_alphaW0.1_FINAL_FacePortraitPhoto_Gender_Pose_AgePhases_Expression_BackgroundB"
-
 dataset_folder = f"{root_folder}/FR_DATASETS/{folder_to_test}"
-# dataset_folder = f"{root_folder}/FR_DATASETS/12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments"
-# TODO 12-2024_SD21_LoRA4_alphaW0.1_Face_Poses
-# TODO 12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments
-# TODO 12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments_Ages
-
-models = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_TimestepWeight"]
 
 
 model = "TODO"
 benchmark_folder = f"{root_folder}/FR_training/VALIDATION_DATASETS_from_webface"
-augment = True 
+augment = False 
 stopping_condition_epochs = 0
-
 verification_frequency = 1
 output_folder_name_start = f"REC_EXP_01_2025_LFW_Verification{verification_frequency}"
-
 
 EMBEDDING_TYPE = [
     "."
@@ -60,7 +41,7 @@ start_epoch = 0
 
 s = 64.0
 m = 0.35
-loss = "CosFace"#""
+loss = "AdaFace"
 dropout_ratio = 0.4
 
 augmentation = "ra_4_16"  # hf, ra_4_16

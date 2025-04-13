@@ -37,12 +37,14 @@ age_phases = ["", "young", "middle-aged", "old"]
 
 num_samples_per_prompt = 1
 num_prompts = 21 # 21 #21 #50 #21 #len(additions_list)
-add_gender = True
 
+add_gender = True
 add_pose = True
 add_age = False # should be first in combination
 add_background = True 
-use_non_finetuned = True 
+
+do_not_use_negative_prompt = False
+use_non_finetuned = False 
 
 
 # all_prompt_combinations = list(product(backgrounds_list, expression_list))
@@ -57,7 +59,8 @@ elif add_background:
     
 elif add_age: 
     all_prompt_combinations = list(age_phases * 6)
-
+else: 
+    all_prompt_combinations = list([""] * num_prompts)
 print(all_prompt_combinations)
 
 device = "cuda:0"
@@ -75,6 +78,7 @@ if add_gender: folder_output += "_Gender"
 if add_pose: folder_output+= "_Pose"
 if add_age: folder_output+= "_Age"
 if add_background: folder_output += "_Background"
+if do_not_use_negative_prompt: folder_output += "_NoNegPrompt"
 
 architectures = ["stabilityai/stable-diffusion-2-1-base"]
 model_architecture = architectures[0]
@@ -113,12 +117,10 @@ for id_number, which_id in enumerate(ids):
         if gender == "M": gender = "male"
         elif gender == "F": gender = "female"
     
-    
     all_prompts_for_id = random.sample(all_prompt_combinations, num_prompts)
     
     comparison_image_list = [] 
     for model_name in models_to_test:
-
         full_model_path = os.path.join(folder_of_models, model_name, which_id, checkpoint)
 
         output_dir = os.path.join(folder_output, model_name)#"GENERATED_SAMPLES/FINAL_No_ID_loss_TEST"

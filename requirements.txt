@@ -5,3 +5,4 @@ diffusers==0.32.2
 transformers==4.34.1
 peft
 accelerate
+facenet-pytorch

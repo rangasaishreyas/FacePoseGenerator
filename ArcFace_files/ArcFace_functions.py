@@ -1,6 +1,6 @@
 import numpy as np 
 import torch 
-from Arcface_files.backbones import get_model
+from ArcFace_files.backbones import get_model
 
 #########################################
 """ Replaced with torch cosine similarity """
@@ -26,7 +26,7 @@ def preprocess_image_for_ArcFace(img):
 #########################################
 def prepare_locked_ArcFace_model():
     arcface_model = get_model("r100", fp16=True) # TODO turned to true
-    arcface_weights = "Arcface_files/ArcFace_r100_ms1mv3_backbone.pth"
+    arcface_weights = "ArcFace_files/ArcFace_r100_ms1mv3_backbone.pth"
     arcface_model.load_state_dict(torch.load(arcface_weights))
     arcface_model.eval()
     for param in arcface_model.parameters():

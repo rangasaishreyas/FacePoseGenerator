@@ -116,7 +116,7 @@ def main(args):
 
         # copy config to output folder
         shutil.copyfile(
-            r"config/FR_config.py", os.path.join(output_dir, "config.py")
+            rf"{cfg.root_folder}/FR_training/config/FR_config.py", os.path.join(output_dir, "config.py")
         )
 
         ###############################################
@@ -326,7 +326,7 @@ def main(args):
 
                 if len(cfg.val_targets) != 0 and epoch != 0 and epoch % cfg.verification_frequency == 0:
                     #list_of_accs = []
-                    #logger.info(f"Verification benchmarks: {cfg.val_targets}")
+                    # logger.info(f"Verification benchmarks: {cfg.val_targets}")
 
                     ver_accs = callback_verification(epoch, model)
                     avg_acc[0] = sum(ver_accs) / len(ver_accs)

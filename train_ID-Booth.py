@@ -64,7 +64,7 @@ from diffusers.utils.hub_utils import load_or_create_model_card, populate_model_
 from diffusers.utils.import_utils import is_xformers_available
 from diffusers.utils.torch_utils import is_compiled_module
 
-from Arcface_files.ArcFace_functions import preprocess_image_for_ArcFace, prepare_locked_ArcFace_model
+from ArcFace_files.ArcFace_functions import preprocess_image_for_ArcFace, prepare_locked_ArcFace_model
 #from ArcFace_dataset import ArcFaceDataset, collate_fn_arcface
 import re 
 from facenet_pytorch import MTCNN
@@ -1096,13 +1096,11 @@ def main(args):
                             arcface_cos_similarity = cos(pred_arcface_features, gt_arcface_embed[0])
                             
                             identity_loss = 1 - arcface_cos_similarity #((1 - arcface_cos_similarity) + (1 - arcface_cos_similarity_prior)) / 2 # TODO check is this ok                         
-                            identity_noise_level_weight = (1 - timesteps[0] / noise_scheduler.config.num_train_timesteps) #** 2
-                           
+
+                            identity_noise_level_weight = (1 - timesteps[0] / noise_scheduler.config.num_train_timesteps) ** 2
                             if not cfg.timestep_loss_weighting: identity_noise_level_weight = 1 
-                            if cfg.alpha_id_loss_weighting is not None: 
-                                loss = (1 - cfg.alpha_id_loss_weighting) * loss + cfg.alpha_id_loss_weighting * identity_noise_level_weight * identity_loss
-                            else: 
-                                loss = loss + identity_noise_level_weight * identity_loss
+                            
+                            loss = loss + identity_noise_level_weight * identity_loss
                         #else: 
                         #    print("not detected", timesteps[0])
                     
@@ -1128,18 +1126,16 @@ def main(args):
                             img_cropped = cropped_image_to_arcface_input(img_cropped)
                             pred_arcface_features = arcface_model(img_cropped)
                             
-                            identity_noise_level_weight = (1 - timesteps[0] / noise_scheduler.config.num_train_timesteps)  #** 2
+                            identity_noise_level_weight = (1 - timesteps[0] / noise_scheduler.config.num_train_timesteps)  ** 2
                             if not cfg.timestep_loss_weighting: identity_noise_level_weight = 1 
 
                             # input: anchor, positive, negative
                             triplet_loss = triplet_loss_function(pred_arcface_features, gt_arcface_embed[0][None, :], gt_arcface_embed[1][None, :])
-                            
-                            if cfg.alpha_id_loss_weighting is not None: 
-                                loss = (1 - cfg.alpha_id_loss_weighting) * loss + cfg.alpha_id_loss_weighting * identity_noise_level_weight * triplet_loss
-                            else: 
-                                loss = loss + identity_noise_level_weight * triplet_loss
+                            loss = loss +  identity_noise_level_weight * triplet_loss
+                        
                 else:
-                    loss = F.mse_loss(model_pred.float(), target.float(), reduction="mean")
+                    instance_loss = F.mse_loss(model_pred.float(), target.float(), reduction="mean")
+                    loss = instance_loss
                 
                 accelerator.backward(loss)  
 
@@ -1156,15 +1152,17 @@ def main(args):
 
             step_loss = loss.detach().item()
             step_instance_loss = instance_loss.detach().item()
-            step_prior_loss = prior_loss.detach().item()
+
+            if cfg.with_prior_preservation:
+                step_prior_loss = prior_loss.detach().item()
+            else: step_prior_loss = 0 
 
             if cfg.which_loss == "identity":
                 step_id_loss = identity_loss.detach().item()
-
             elif cfg.which_loss == "triplet_prior":
                 step_id_loss = triplet_loss.detach().item()
-
             else: step_id_loss = 0
+
             avg_combined_loss.append(step_loss)
             avg_instance_loss.append(step_instance_loss)
             avg_prior_loss.append(step_prior_loss)
@@ -1312,7 +1310,6 @@ if __name__ == "__main__":
         print("Args:", vars(args))
         os.makedirs(args.output_dir, exist_ok=True)
         
-        
         # Save args to json
         json_output_file = os.path.join(args.output_dir, "training_config.json")
         with open(json_output_file, 'w') as fp:
@@ -1322,13 +1319,7 @@ if __name__ == "__main__":
             all_args = config_vars | args_vars
             json.dump(all_args, fp, indent=4)
         
-
-        # print(id_folders)
-        #exit()
         id_folders.sort(key=natural_keys)
-        #id_folders = id_folders[:13]
-        #id_folders = ["ID_1", "ID_2", "ID_8", "ID_20"]
-        # print(id_folders)
         id_limit = 0 # 5 # TODO  
         for i, id_folder in enumerate(id_folders): 
             print(id_folder)

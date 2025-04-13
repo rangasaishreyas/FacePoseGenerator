@@ -16,18 +16,22 @@ root_folder = "/shared/home/darian.tomasevic/ID-Booth/"
 # dataset_folder = f"{root_folder}/FR_DATASETS/FR_DATASETS_SDXL/tufts_512_poses_1-7_all_imgs_jpg_per_ID"
 # models = ["images"]
 
-dataset_folder = f"{root_folder}/FR_DATASETS_AUGMENTED_+21_samples/12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments"
+# dataset_folder = f"{root_folder}/FR_DATASETS_AUGMENTED_+21_samples/12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments"
+# folder_to_test = "12-2024_SD21_LoRA4_alphaWNone_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB"
+folder_to_test = "12-2024_SD21_LoRA4_alphaWNone_FacePortrait_Photo_Gender_Pose_BackgroundB_100samples"
+
+dataset_folder = f"{root_folder}/FR_DATASETS_AUGMENTED_samples/{folder_to_test}"
 
 models = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_TimestepWeight"]
 
 
 model = "TODO"
-benchmark_folder = f"{root_folder}/Face_recognition_training/VALIDATION_DATASETS_from_webface"
-augment = True 
+benchmark_folder = f"{root_folder}/FR_training/VALIDATION_DATASETS_from_webface"
+augment = False 
 stopping_condition_epochs = 0
 
-output_folder_name_start = "REC_EXP_12_2024_TFD+Synth_EndGame_LFW_MultiRun"#_AllBench"
-
+verification_frequency = 1
+output_folder_name_start = f"REC_EXP_01_2025_TFD+Synth_LFW_Verification{verification_frequency}"#_AllBench"
 
 EMBEDDING_TYPE = [
     "."

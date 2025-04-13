@@ -116,7 +116,7 @@ def main(args):
 
         # copy config to output folder
         shutil.copyfile(
-            r"config/FR_config.py", os.path.join(output_dir, "config.py")
+            rf"{cfg.root_folder}/FR_training/config/FR_config.py", os.path.join(output_dir, "config.py")
         )
 
         ###############################################

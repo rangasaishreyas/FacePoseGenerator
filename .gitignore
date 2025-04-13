@@ -21,6 +21,7 @@
 *EXPERIMENTS*
 *VALIDATION_DATASETS*
 *CLASS_IMAGES*
+*NICE_SAMPLES*
 
 *facenet_pytorch*
 *images_during_training*
@@ -28,6 +29,7 @@
 *FR_DATASETS*
 *Results*
 *Features*
+*SwinFace*
 
 *Example*
 *REC_EXP*

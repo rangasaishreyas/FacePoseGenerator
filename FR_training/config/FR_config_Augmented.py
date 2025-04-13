@@ -1,14 +1,16 @@
 architecture = "resnet50"#"resnet50"#"resnet50"
 
-# root_folder = "/shared/home/darian.tomasevic/ID-Booth/"
-root_folder = "/home/darian/Desktop/Diffusion/ID-Booth/"
+root_folder = "/shared/home/darian.tomasevic/ID-Booth/"
+# root_folder = "/home/darian/Desktop/Diffusion/ID-Booth/"
 
-folder_to_test = "12-2024_SD21_LoRA4_alphaW0.1_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB"
+# folder_to_test = "12-2024_SD21_LoRA4_alphaW0.1_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB"
 # folder_to_test = "12-2024_SD21_LoRA4_alphaW0.1_FINAL_FacePortraitPhoto_Gender_Pose_AgePhases_Expression_BackgroundB"
+# folder_to_test = "12-2024_SD21_LoRA4_alphaWNone_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB"
+folder_to_test = "12-2024_SD21_LoRA4_alphaWNone_FacePortrait_Photo_Gender_Pose_BackgroundB_100samples"
 
-dataset_folder = f"{root_folder}/FR_DATASETS/{folder_to_test}"
+dataset_folder = f"{root_folder}/FR_DATASETS_AUGMENTED_samples/{folder_to_test}"
 
-dataset_folder = f"{root_folder}/FR_DATASETS_AUGMENTED_+21_samples/12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments"
+# dataset_folder = f"{root_folder}/FR_DATASETS_AUGMENTED_+21_samples/12-2024_SD21_LoRA4_alphaW0.1_Face_Poses_Environments"
 
 # # TODO 
 #dataset_folder = f"{root_folder}/FR_DATASETS/FR_DATASETS_SDXL/tufts_512_poses_1-7_all_imgs_jpg_per_ID"
@@ -23,8 +25,8 @@ augment = False
 stopping_condition_epochs = 6 #6 #6 # 10 # TODO was 6 
 stop_only_after_epoch_schedule = False 
 
-
-output_folder_name_start = "REC_EXP_01_2025_TFD+Synth_EndGame_LFW_MultiRun"#_AllBench"
+verification_frequency = 1
+output_folder_name_start = f"REC_EXP_01_2025_TFD+Synth_LFW_Verification{verification_frequency}"#_AllBench"
 
 EMBEDDING_TYPE = [
     "."
@@ -52,7 +54,7 @@ dropout_ratio = 0.4
 
 augmentation = "ra_4_16"  # hf, ra_4_16
 
-verification_frequency = 5
+
 print_freq = 1 #50
 val_path = "TODO"#"/data/Biometrics/database/faces_emore"  # "/data/fboutros/faces_emore"
 val_targets = ["lfw"]

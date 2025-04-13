@@ -220,11 +220,9 @@ def main():
 
     args = parser.parse_args()
     
-    # which_folders = os.listdir("GENERATED_SAMPLES")
-    which_folders = [#"12-2024_SD21_LoRA4_alphaWNone_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB",
-                    #"12-2024_SD21_LoRA4_alphaWNone_FacePortrait_Photo_Gender_Pose_BackgroundB_100samples"
-                    #"01-2025_ID-Booth_ABLATION",
-                    "01-2025_ID-Booth_ABLATION_LOSS"
+    root_folder = "GENERATED_SAMPLES_Ablation"
+    which_folders = [#"12-2024_SD21_LoRA4_alphaWNone_FacePortrait_Photo_21_Gender_Pose_Background",
+                     "12-2024_SD21_LoRA4_alphaWNone_FacePortrait_Photo_100_Gender_Pose_Background",
                     ]
     
     #which_folders = ["FACE_DATASETS/tufts_512_poses_1-7_all_imgs_jpg_per_ID"]
@@ -232,13 +230,12 @@ def main():
     
     # mapping for ids to consecutive numbers! 
     id_mapping_dict = None 
-    
-    
 
     for which_folder in which_folders:
-        args.in_folder = f"../GENERATED_SAMPLES_ABLATION/{which_folder}"
+        args.in_folder = f"{root_folder}/{which_folder}"
+        #args.in_folder = which_folder
         print(which_folder)
-        args.out_folder = f"../FR_DATASETS_ABLATION/{args.in_folder.split('/')[-1]}"#"Testing_Naser_aligned_samples"
+        args.out_folder = f"FR_DATASETS/{args.in_folder.split('/')[-1]}" #"_Ablation"
         args.batchsize = 8
 
         model_folders = os.listdir(args.in_folder)

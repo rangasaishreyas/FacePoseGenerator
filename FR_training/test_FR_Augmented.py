@@ -88,7 +88,7 @@ def main(args):
         
         # root_model_folder = f"EXPERIMENTS_RECOGNITION_{cfg.model.split('/')[2].split('_')[3]}"
         #model_dir = os.path.join(root_model_folder, cfg.architecture, os.path.join(cfg.model.split("/")[-2], cfg.model.split("/")[-1]))
-        results_dir = os.path.join(cfg.root_folder, "FR_training", f"REC_RESULTS_TFD+Synth/{cfg.architecture}_AUG{cfg.augment}/{args.run_index}_{cfg.dataset_folder.split('/')[-1]}") #cfg.embedding_type + f"_w{cfg.width}_d{cfg.depth}")
+        results_dir = os.path.join(cfg.root_folder, "FR_training", f"REC_TFD+Synth_RESULTS_{cfg.verification_frequency}/{cfg.architecture}_AUG{cfg.augment}/{args.run_index}_{cfg.dataset_folder.split('/')[-1]}") #cfg.embedding_type + f"_w{cfg.width}_d{cfg.depth}")
         os.makedirs(results_dir, exist_ok=True)
         
         file_name_to_save_to = f"{cfg.model}.json"
