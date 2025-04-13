@@ -220,10 +220,8 @@ def main():
 
     args = parser.parse_args()
     
-    root_folder = "GENERATED_SAMPLES_Ablation"
-    which_folders = [#"12-2024_SD21_LoRA4_alphaWNone_FacePortrait_Photo_21_Gender_Pose_Background",
-                     "12-2024_SD21_LoRA4_alphaWNone_FacePortrait_Photo_100_Gender_Pose_Background",
-                    ]
+    root_folder = "Generated_Samples"
+    which_folders = ["FacePortrait_Photo_21_Gender_Pose_Background"]
     
     #which_folders = ["FACE_DATASETS/tufts_512_poses_1-7_all_imgs_jpg_per_ID"]
     #which_folders = ["../ID-Diff/FACE_DATASETS/FFHQ_512"]

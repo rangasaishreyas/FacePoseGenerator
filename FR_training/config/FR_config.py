@@ -2,10 +2,8 @@ architecture = "resnet50"#"resnet50"#"resnet50"
 
 # root_folder = "/shared/home/darian.tomasevic/ID-Booth/"
 root_folder = ".."
-
-# folder_to_test = "12-2024_SD21_LoRA4_alphaWNone_FINAL_FacePortraitPhoto_Gender_Pose_BackgroundB"
-folder_to_test = "12-2024_SD21_LoRA4_alphaWNone_FacePortrait_Photo_Gender_Pose_BackgroundB_100samples"
-models = ["no_new_Loss", "identity_loss_TimestepWeight", "triplet_prior_loss_TimestepWeight"]
+folder_to_test = "FacePortrait_Photo_21_Gender_Pose_Background" # TODO
+models = ["DreamBooth", "PortraitBooth", "ID-Booth"]
 
 # folder_to_test = "tufts_512_poses_1-7_all_imgs_jpg_per_ID"
 # models = ["images"]
@@ -16,7 +14,7 @@ dataset_folder = f"{root_folder}/FR_DATASETS/{folder_to_test}"
 model = "TODO"
 benchmark_folder = f"{root_folder}/FR_training/VALIDATION_DATASETS_from_webface"
 augment = False 
-stopping_condition_epochs = 6 #6 #6 # 10 # TODO was 6 
+stopping_condition_epochs = 6 
 stop_only_after_epoch_schedule = False 
 
 verification_frequency = 1
