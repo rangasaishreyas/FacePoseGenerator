@@ -1292,18 +1292,20 @@ if __name__ == "__main__":
     for which_loss in cfg.losses_to_test:#["triplet_prior"]:#,# "identity", "triplet_prior"]:#["", "identity", "triplet_prior"]:
         cfg.which_loss = which_loss
         output_folder = cfg.output_folder
-        if cfg.which_loss != "": 
-            output_folder +=  cfg.which_loss + "_loss" #+ "_" + cfg.comment
-            if not cfg.timestep_loss_weighting:
-                output_folder += "_NoTimestepWeight"
-            else: 
-                output_folder += "_TimestepWeight"
-        else: 
-            output_folder += "no_new_Loss"
         
         if cfg.train_text_encoder: 
             output_folder += "_WithTextEncoder"
-    
+
+        loss_folder = ""
+        if cfg.which_loss == "":
+            loss_folder = "DreamBooth"
+        elif cfg.which_loss == "identity":
+            loss_folder = "PortraitBooth"
+        elif cfg.which_loss == "triplet_prior":
+            loss_folder = "ID-Booth"
+
+        output_folder = os.path.join(output_folder, loss_folder)
+        
         cfg.instance_data_dir = cfg.source_folder
         args.output_dir = output_folder
         

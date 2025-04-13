@@ -18,7 +18,7 @@ instance_prompt = "photo of sks person" # "face portrait photo of fid person"
 # Prior preservation images
 with_prior_preservation = True  
 class_prompt = "photo of a person" #"face portrait photo of a person" #
-# class_data_dir ="/shared/home/darian.tomasevic/ID-Booth/CLASS_IMAGES/SD21_Class_imgs_200/images"
+# class_data_dir = "/shared/home/darian.tomasevic/ID-Booth/CLASS_IMAGES/SD21_Class_imgs_200/images"
 class_data_dir = "../CLASS_IMAGES/SD21_Class_imgs_200/images"
 num_class_images = 200 
 prior_loss_weight = 1.0
@@ -79,5 +79,5 @@ alpha_id_loss_weighting = 0.1
 
 sample_batch_size = 1 # 4
 
-output_folder = f"OUTPUT_MODELS/12-2024_SD21_LoRA{lora_rank}" #_NoPriorAblation" 
+output_folder = f"Trained_LoRA_Models/" #_NoPriorAblation" 
 show_tqdm = True
