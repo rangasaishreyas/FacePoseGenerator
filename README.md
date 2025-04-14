@@ -12,11 +12,13 @@
 <div align="center">
         
 </div>
-This is the official implementation of the ID-Booth framework, which:
+
+This is the official implementation of the [ID-Booth framework](https://arxiv.org/abs/2504.07392), which:
 
 &emsp;🔥 generates in-the-wild images of consenting identities captured in a constrained environment <br>
 &emsp;🔥 uses a triplet identity loss to fine-tune Stable Diffusion for identity-consistent yet diverse image generation <br>
 &emsp;🔥 can augment small-scale datasets to improve their suitability for training face recognition models  <br>
+
 <br>
 
 <div align="center">
