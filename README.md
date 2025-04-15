@@ -4,7 +4,7 @@
   Darian Tomašević, Fadi Boutros, Chenhao Lin, Naser Damer, Peter Peer, Vitomir Štruc
   <br>
   <br>
-  <a href='https://arxiv.org/abs/2403.11641'><img src='https://img.shields.io/badge/Paper-arXiv-red'></a>
+  <a href='https://arxiv.org/abs/2504.07392'><img src='https://img.shields.io/badge/Paper-arXiv-red'></a>
   <a href='https://fg2025.ieee-biometrics.org/'><img src='https://img.shields.io/badge/Accepted_at-FG_2025-blue'></a>
   <br>
   <br>
