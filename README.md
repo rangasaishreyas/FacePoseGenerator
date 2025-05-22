@@ -1,7 +1,15 @@
 # ID-Booth: Identity-consistent Face Generation with Diffusion Models
 
 <div align="center">
-  Darian Tomašević, Fadi Boutros, Chenhao Lin, Naser Damer, Vitomir Štruc, Peter Peer
+  Darian Tomašević<sup>1</sup>, Fadi Boutros<sup>2</sup>, Chenhao Lin<sup>3</sup>, Naser Damer<sup>2,4</sup>, Vitomir Štruc<sup>5</sup>, Peter Peer<sup>1</sup>
+  <br>
+  <br>
+  <sup>1</sup> University of Ljubljana, Faculty of Computer and Information Science, Ljubljana, Slovenia <br>
+  <sup>2</sup> Fraunhofer Institute for Computer Graphics Research IGD, Darmstadt, Germany <br>
+  <sup>3</sup> Xi’an Jiaotong University, School of Cyber Science and Engineering, Xi’an, China <br>
+  <sup>4</sup> Department of Computer Science, TU Darmstadt, Germany <br>
+  <sup>5</sup> University of Ljubljana, Faculty of Electrical Engineering, Ljubljana, Slovenia
+  
   <br>
   <br>
   <a href='https://dariant.github.io/publications/ID-Booth'><img src='https://img.shields.io/badge/Project-Page-blue'></a>
